@@ -1,0 +1,90 @@
+<def>
+
+</def>
+
+<description>
+  <label name=level value={}>
+  <label name=curriculum value={}>
+  <label name=under value={}>
+  <label name=thesaurus value={}>
+</description>
+
+<ITEM TITLE="@Title">
+  <INSTANCE>
+  </INSTANCE>
+  <REQUIREMENT>
+  </REQUIREMENT>
+
+  <SEQUENCE INDEX=history>
+  </SEQUENCE>
+  <REQUIREMENT>
+  </REQUIREMENT>
+
+  <QUESTION>
+    <function name=TrunkModule list={}>
+      <def module=".">
+      </def> 
+    </function>
+
+    <function name=StatementSteps list={}>
+      <return value={"I1"}>
+    </function>
+
+    <function name=StatementModule list={}>
+      <def module="."> 
+      
+        <function name=StatementModule_Main list={modeRequested}>
+          <TEXT REF=STATEMENT></TEXT>
+          <return value="STATEMENT">
+        </function>
+
+        <function name=StatementModule_I1 list={modeRequested}>
+          <TEXT REF=INTERACTION></TEXT>
+          <return value="INTERACTION">
+        </function>      
+
+      </def>
+    </function>
+
+
+    <function name=ResolutionSteps list={}>
+      <return value={}>
+    </function>
+
+    <function name=ResolutionModule list={partsRequested}>
+      <def module=".">
+	<function name=ResolutionModule_Main list={modeRequested}> 
+	  <TEXT REF=RESOLUTION></TEXT>
+	  <return value="RESOLUTION">
+	</function>
+
+        <function name=ResolutionModule_Solution list={}>             
+          <TEXT REF=SOLUTION> </TEXT>
+          <return value="SOLUTION">
+        </function>
+
+      </def>
+    </function>
+
+
+    <function name=AnsproModule list={}>
+      <return value=#{}>
+    </function>
+    
+    <function name=TeacherModule list={partRequested,mode}>
+      &(teacherAnswerHash=#{};;);
+      <return value=@teacherAnswerHash>
+    </function>
+
+    <function name=HtmlTeacherModule list={partRequested}>
+      <unvar name=teacherAnswerHTML>
+      <return value="@teacherAnswerHTML">
+    </function>
+    
+  </QUESTION>
+
+  <function name=anspro_idEditor list={studentAnswer,teacherAnswer}>
+    <evaluation rule=rule_type student="@studentAnswer" teacher="@teacherAnswer">
+    <feedback></feedback>
+  </function>
+</ITEM>
