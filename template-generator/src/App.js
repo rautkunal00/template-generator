@@ -1,8 +1,8 @@
 import React from 'react';
-import './App.css';
-import Selector from './components/Selector';
-import Input from './components/Input';
-import Output from './components/Output';
+import './App.scss';
+import Selector from './components/Selector/Selector';
+import Input from './components/Input/Input';
+import Output from './components/Output/Output';
 
 function App() {
   return (
