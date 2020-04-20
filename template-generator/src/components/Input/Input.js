@@ -1,18 +1,20 @@
-import React from 'react';
-import Addrow from './Addrow';
+import React, { Component } from 'react';
+import Quetionpart from './Quetionpart';
 import './Input.scss';
+import Gspart from './Gspart';
 
-function Input() {
-  return (
-    <div className="input-panel">
-      <form>
-        <p>Input Table</p>
-        <table className="inputTable" cellspacing="0">
-          <Addrow />
-        </table>
-      </form>
-    </div>
-  );
+class Input extends Component {
+  render() {
+    return (
+      <div className="input-panel">
+        <form>
+          <p>Input Table</p>
+          <Quetionpart />
+          <Gspart />
+        </form>
+      </div>
+    );
+  }
 }
 
 export default Input;

@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-function Addrow() {
-  return (
-    <tr>
-      <td><label><input name="isStatic" type="checkbox" />Static Part</label></td>
-    </tr>
-  );
+class Addrow extends Component {
+  render() {
+    return (
+      <tr>
+        <td id=""></td>
+        <td id=""></td>
+        <td id=""></td>
+        <td id=""></td>
+        <td id=""></td>
+      </tr>
+    );
+  }
 }
 export default Addrow;
