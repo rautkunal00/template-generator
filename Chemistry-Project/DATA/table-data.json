@@ -1,0 +1,6 @@
+{
+    "mainPartHeaders":["Step Name","Editor Type","No. of Tries"],
+    "mainPartClass":["main-I","main-tool-","tries-"],
+    "gsPartHeaders":["Step Name", "Static Step","Editor Type","Only static Editor"],
+    "gsPartClass":["gs-GS", "GS-static-","gs-tool-","gs-static-tool-"]
+}
