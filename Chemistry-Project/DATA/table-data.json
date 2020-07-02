@@ -1,6 +1,4 @@
 {
-    "mainPartHeaders":["Step Name","Editor Type","No. of Tries"],
-    "mainPartClass":["main-I","main-tool-","tries-"],
-    "gsPartHeaders":["Step Name", "Static Step","Editor Type","Only static Editor"],
-    "gsPartClass":["gs-GS", "GS-static-","gs-tool-","gs-static-tool-"]
+    "mainPartHeaders":["Step Name","Editor Type","No. of Editbox","No. of Dropdowns","No. of Tries"],
+    "gsPartHeaders":["Step Name", "Static Step","Editor Type","No. of Editbox","No. of Dropdowns"]
 }

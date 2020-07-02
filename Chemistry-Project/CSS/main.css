@@ -9,3 +9,16 @@ div,
 .main-question-table {
     margin: 20px;
 }
+
+.hide {
+    display: none;
+}
+
+.formData {
+    position: fixed;
+    top: 50px;
+    left: 50px;
+    z-index: 9;
+    background:yellowgreen;
+    font-size: 22px;;
+}
