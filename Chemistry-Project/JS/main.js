@@ -1,6 +1,6 @@
 $(document).ready(() => {
-    addButtons();
-    editorsList = fetchEditors();
+    addStructure();
+    fetchEditors();
     addTableHeaders();
     addButtonsListener();
 });

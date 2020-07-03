@@ -1,7 +1,7 @@
 let mainQueForm = () => {
     let form = `
     <div class="formData hide" id="mainPopupForm">
-        <form class="form-container">
+        <div class="form-container">
             <table>
                 <tr>
                     <th>Attribute Name</th>
@@ -13,7 +13,11 @@ let mainQueForm = () => {
                 </tr>
                 <tr>
                     <td>Editor type</td>
-                    <td><select id="mainEditorSelector">${editorsList}</select></td>
+                    <td><select id="mainEditorSelector"><option>Select Editor</option>${editorsList}</select></td>
+                </tr>
+                <tr>
+                    <td>No. of Tries</td>
+                    <td><input type=number id="mainTriesCount" name="mainTriesCount" min=1 max=3 value="3" disabled="disabled" /></td>
                 </tr>
                 <tr>
                     <td>No. of Editbox</td>
@@ -24,15 +28,11 @@ let mainQueForm = () => {
                     <td><input type=number id="mainDropdownCount" name="mainDropdownCount" disabled="disabled" /></td>
                 </tr>
                 <tr>
-                    <td>No. of Tries</td>
-                    <td><input type=number id="mainTriesCount" name="mainTriesCount" value="3" disabled="disabled" /></td>
-                </tr>
-                <tr>
                     <td><button id="cancelMainForm">Cancel</button></td>
                     <td><button id="submitMainForm" disabled="disabled">Submit</button></td>
                 </tr>
             </table>
-        </form>
+        </div>
     </div>`;
     return form;
 }
@@ -40,7 +40,7 @@ let mainQueForm = () => {
 let gsQueForm = () => {
     let form = `
     <div class="formData hide" id="gsPopupForm">
-        <form class="form-container">
+        <div class="form-container">
             <table>
                 <tr>
                     <th>Attribute Name</th>
@@ -56,7 +56,7 @@ let gsQueForm = () => {
                 </tr>
                 <tr>
                     <td>Editor type</td>
-                    <td><select id="gsEditorSelector" disabled="disabled">${editorsList}</select></td>
+                    <td><select id="gsEditorSelector"><option>Select Editor</option>${editorsList}</select></td>
                 </tr>
                 <tr>
                     <td>No. of Editbox</td>
@@ -71,7 +71,7 @@ let gsQueForm = () => {
                     <td><button id="submitGsForm" disabled="disabled">Submit</button></td>
                 </tr>
             </table>
-        </form>
+        </div>
     </div>`;
     return form;
 }
