@@ -1,6 +1,6 @@
 
 
-const getISLCode = (statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule) => {
+const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps) => {
   var isl_code = `
 <def>
 </def>
@@ -31,17 +31,23 @@ const getISLCode = (statementModuleReturnValues, resolutionModuleReturnValues, s
   <QUESTION>
     <function name=TrunkModule list={}>
       <def module=".">
-        <var name=varEqualTo value=@userf.disp("=")>
-        <var name=indent_start value="@userf.indent_begin();"> 
-        <var name=indent_end value="@userf.indent_end();">
-        <var name=table_width value=45> 
 
-        ${object_reference.join("")}
+        <var name=varEqualTo value=@userf.disp("=")>
+        <var name=indent_start value="@userf.indent_begin();">
+        <var name=indent_end value="@userf.indent_end();">
+        <var name=table_width value="width=40">
+        <var name=nlHint value="@.newLineHint;">
+        <var name=xl value="@userf.xlist();">
+        <var name=valign_base value="valign=baseline">
+        <var name=align_right value='style="text-align:right;"'>
+        <var name=align_left value='style="text-align:left;"'>
+        <var name=align_center value='style="text-align:center;"'> 
+
       </def> 
     </function>
 
     <function name=StatementSteps list={}>
-      ${statementModuleReturnValues}
+      ${statementStepsList}
     </function>
 
     <function name=StatementModule list={}>
@@ -53,14 +59,14 @@ const getISLCode = (statementModuleReturnValues, resolutionModuleReturnValues, s
           <return value="STATEMENT">
         </function>
 
-        ${statementSteps}  
+        ${statementSteps}
 
       </def>
     </function>
 
 
     <function name=ResolutionSteps list={}>
-      ${resolutionModuleReturnValues}
+      ${resolutionStepsList}
     </function>
 
     <function name=ResolutionModule list={partsRequested}>
@@ -72,29 +78,27 @@ const getISLCode = (statementModuleReturnValues, resolutionModuleReturnValues, s
       <return value="RESOLUTION">
     </function>
 
-        ${resolutionSteps}
+      ${resolutionSteps}
 
       </def>
     </function>
 
 
     <function name=AnsproModule list={}>
-      ${ansproMapping}
     </function>
     
     <function name=TeacherModule list={partRequested,mode}>
-      &(teacherAnswerHash=#{};;);${teacherModule}
+      &(teacherAnswerHash=#{};;);
       <return value=@teacherAnswerHash>
     </function>
 
     <function name=HtmlTeacherModule list={partRequested}>
-      <unvar name=teacherAnswerHTML>${teacherHTMLModule}
+      <unvar name=teacherAnswerHTML>
       <return value="@teacherAnswerHTML">
     </function>
     
   </QUESTION>
 
-${evaluationBlocks}
 </ITEM>
     `
   return isl_code;

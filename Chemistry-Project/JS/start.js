@@ -48,7 +48,7 @@ const addFormButtonListener = () => {
             editorData.ddm = ddm;
         }
         mainQuestions.push(editorData);
-        updateDataInTable();
+        updateISL();
     });
     $("#cancelMainForm").click(() => {
         noMainQue = noMainQue - 1;
@@ -74,7 +74,7 @@ const addFormButtonListener = () => {
             }
         }
         gsQuestions.push(editorData);
-        updateDataInTable();
+        updateISL();
     });
     $("#cancelGsForm").click(() => {
         noGsQue = noGsQue - 1;

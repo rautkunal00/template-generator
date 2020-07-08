@@ -71,5 +71,5 @@ const updateDataInTable = () => {
 const updateISL = () => {
     clearOldData();
     updateDataInTable();
-    generateISLCode();
+    generateISL();
 }
