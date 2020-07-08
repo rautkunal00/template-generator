@@ -22,7 +22,7 @@ function generateEditorList(main_part, g_steps) {
 
 
 function generateISLCode() {
-    let statementModuleReturnValues = generateStatementSteps(statementModuleListQuoted)
+    let statementModuleReturnValues = generateStatementSteps(statementModuleListQuoted);
     let resolutionModuleReturnValues = generateResolutionSteps(resolutionModuleListQuoted);
     let statementSteps = getStatementSteps(statementModuleList);
     let resolutionSteps = getResolutionSteps(resolutionModuleList);
