@@ -123,6 +123,7 @@ const generateISL = () => {
     const statementSteps = getStatementSteps();
     const resolutionSteps = getResolutionSteps();
     const staticSourceList = statObjectReference();
-    const islCode = getISLCode(statementStepsList, resolutionStepsList, statementSteps, resolutionSteps,staticSourceList);
+    const apModuleList = ansproModuleList();
+    const islCode = getISLCode(statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, apModuleList);
     $("#isl-data").val(islCode);
 }

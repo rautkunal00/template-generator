@@ -1,6 +1,6 @@
 
 
-const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList) => {
+const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, apModuleList) => {
   var isl_code = `
 <def>
 </def>
@@ -44,7 +44,7 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
         <var name=align_center value='style="text-align:center;"'> 
 
         ${staticSourceList}
-        
+
       </def> 
     </function>
 
@@ -87,6 +87,7 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
 
 
     <function name=AnsproModule list={}>
+      ${apModuleList}
     </function>
     
     <function name=TeacherModule list={partRequested,mode}>
