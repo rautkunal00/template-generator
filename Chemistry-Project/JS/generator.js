@@ -82,22 +82,22 @@ const getResolutionSteps = () => {
         let editor = ` `;
         switch (editorType) {
             case "ansed":
-                editor = ansedGenerator(i, 0, editbox, ddm);
+                editor = ansedGenerator(i, 2, editbox, ddm);
                 break;
             case "formed":
-                editor = formedGenerator(i, 0, editbox, ddm);
+                editor = formedGenerator(i, 2, editbox, ddm);
                 break;
             case "tabed":
-                editor = tabedGenerator(i, 0, editbox, ddm);
+                editor = tabedGenerator(i, 2, editbox, ddm);
                 break;
             case "moleced":
-                editor = molecedGenerator(i, 0);
+                editor = molecedGenerator(i, 2);
                 break;
             case "eleced":
-                editor = elecedGenerator(i, 0);
+                editor = elecedGenerator(i, 2);
                 break;
             case "lewised":
-                editor = lewisedGenerator(i, 0);
+                editor = lewisedGenerator(i, 2);
                 break;
             default:
                 editor = staticGS();
@@ -118,11 +118,11 @@ const HtmlTeacherModule = () => {
 }
 
 const generateISL = () => {
-    let staticSourceList = [];
     const statementStepsList = generateStatementSteps();
     const resolutionStepsList = generateResolutionSteps();
     const statementSteps = getStatementSteps();
     const resolutionSteps = getResolutionSteps();
-    const islCode = getISLCode(statementStepsList, resolutionStepsList, statementSteps, resolutionSteps);
+    const staticSourceList = statObjectReference();
+    const islCode = getISLCode(statementStepsList, resolutionStepsList, statementSteps, resolutionSteps,staticSourceList);
     $("#isl-data").val(islCode);
 }

@@ -1,6 +1,6 @@
 
 
-const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps) => {
+const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList) => {
   var isl_code = `
 <def>
 </def>
@@ -43,6 +43,8 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
         <var name=align_left value='style="text-align:left;"'>
         <var name=align_center value='style="text-align:center;"'> 
 
+        ${staticSourceList}
+        
       </def> 
     </function>
 

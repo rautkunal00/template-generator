@@ -1,7 +1,7 @@
 /*  
 mode:
-0 -> Statement Step (Main Question)
-1 -> Guided step (GS)
+1 -> Statement Step (Main Question)
+2 -> Guided step (GS)
 */
 
 const sourceGenerator = (editor, stepName, editbox, ddm) => {
@@ -167,7 +167,43 @@ const lewisedGenerator = (i, mode) => {
     return newEditor;
 }
 
-const staticSourceGenerator = () => {
+const statObjectReference = () => {
     let i = 1, j = 1;
-    
+    let sourceArr = [];
+    mainQuestions.forEach((question) => {
+        let stepName = "I" + i;
+        let editorType = question.type;
+        let editbox = 0;
+        let ddm = 0;
+        if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
+            editbox = question.editbox;
+            ddm = question.ddm;
+        }
+        for (k = 1; k <= (editbox + ddm); k++) {
+            let source = `
+            <text ref=${editorType}_source_${stepName}_${k}></text>`;
+            sourceArr.push(source);
+        }
+        i++;
+    });
+    gsQuestions.forEach((question) => {
+        let stepName = "GS" + j;
+        let editorType;
+        if (!question.static) {
+            editorType = question.type;
+            let editbox = 0;
+            let ddm = 0;
+            if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
+                editbox = question.editbox;
+                ddm = question.ddm;
+            }
+            for (k = 1; k <= (editbox + ddm); k++) {
+                let source = `
+            <text ref=${editorType}_source_${stepName}_${k}></text>`;
+                sourceArr.push(source);
+            }
+        }
+        j++;
+    });
+    return `${sourceArr.join("")}`;
 }
