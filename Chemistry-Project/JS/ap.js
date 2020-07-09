@@ -26,26 +26,25 @@ const splitAnswerForAP = (editbox, ddm, editorType) => {
     let splitReturn = [];
     if (editorType == "tabed") {
         let splitTabed = `
-            &(@multiFeedback.splitAnswer3("student_answer","@userf.removeSet1("@studentAnswer;");"));
-            &(@multiFeedback.splitAnswer3("teacher_answer","@userf.removeSet1("@teacherAnswer;");"));`;
+        &(@multiFeedback.splitAnswer3("student_answer","@userf.removeSet1("@studentAnswer;");"));
+        &(@multiFeedback.splitAnswer3("teacher_answer","@userf.removeSet1("@teacherAnswer;");"));`;
         splitReturn.push(splitTabed);
     }
     if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
         if (editbox != 0) {
             let splitEditbox = `
-            &(@multiFeedback.splitAnswerEditBox("student_answer","@studentAnswer;"));
-            &(@multiFeedback.splitAnswerEditBox("teacher_answer","@teacherAnswer;"));`;
+        &(@multiFeedback.splitAnswerEditBox("student_answer","@studentAnswer;"));
+        &(@multiFeedback.splitAnswerEditBox("teacher_answer","@teacherAnswer;"));`;
             splitReturn.push(splitEditbox);
         }
         if (ddm != 0) {
             let splitDDM = `
-                &(@userf.splitReturnValueByName("@studentAnswer;",".student_"));
-                &(@userf.splitReturnValueByName("@teacherAnswer;",".teacher_"));`;
+        &(@userf.splitReturnValueByName("@studentAnswer;",".student_"));
+        &(@userf.splitReturnValueByName("@teacherAnswer;",".teacher_"));`;
             splitReturn.push(splitDDM);
         }
     }
     return `${splitReturn.join("")}`;
-
 }
 
 
@@ -56,17 +55,17 @@ const apForEditbox = (editbox, ddm, stepName) => {
         if ((editbox + ddm) > 1) {
             if (i < 10) {
                 feedbackStatement = `
-                &(@itemAnspro.storeFeedback("${stepName}.0${i}"))
-                &(@itemAnspro.registerFeedback("${stepName}.0${i}"))`;
+        &(@itemAnspro.storeFeedback("${stepName}.0${i}"))
+        &(@itemAnspro.registerFeedback("${stepName}.0${i}"))`;
             }
             else {
                 feedbackStatement = `
-                &(@itemAnspro.storeFeedback("${stepName}.${i}"))
-                &(@itemAnspro.registerFeedback("${stepName}.${i}"))`;
+        &(@itemAnspro.storeFeedback("${stepName}.${i}"))
+        &(@itemAnspro.registerFeedback("${stepName}.${i}"))`;
             }
         }
         let editboxEvalution = `
-        <evaluation rule=arith2  student="@student_answer${i};" teacher="@teacher_answer${i};">
+        <evaluation rule=arith2 student="@student_answer${i};" teacher="@teacher_answer${i};">
         <feedback>
             &(@userFeedback.fracSimplifyDivByOne(););
         </feedback>${feedbackStatement}`;
@@ -82,17 +81,17 @@ const apForDDM = (editbox, ddm, stepName) => {
         if ((editbox + ddm) > 1) {
             if (i < 10) {
                 feedbackStatement = `
-                &(@itemAnspro.storeFeedback("${stepName}.0${i}"))
-                &(@itemAnspro.registerFeedback("${stepName}.0${i}"))`;
+        &(@itemAnspro.storeFeedback("${stepName}.0${i}"))
+        &(@itemAnspro.registerFeedback("${stepName}.0${i}"))`;
             }
             else {
                 feedbackStatement = `
-                &(@itemAnspro.storeFeedback("${stepName}.${i}"))
-                &(@itemAnspro.registerFeedback("${stepName}.${i}"))`;
+        &(@itemAnspro.storeFeedback("${stepName}.${i}"))
+        &(@itemAnspro.registerFeedback("${stepName}.${i}"))`;
             }
         }
         let ddmEvalution = `
-        <evaluation rule=choice  student="@('.student_ans_returned_${stepName}_${i};');" teacher="@('.teacher_ans_returned_${stepName}_${i};');">
+        <evaluation rule=choice student="@('.student_ans_returned_${stepName}_${i};');" teacher="@('.teacher_ans_returned_${stepName}_${i};');">
         <feedback></feedback>${feedbackStatement}`;
         ddmEvalutionArr.push(ddmEvalution);
     }
@@ -101,7 +100,7 @@ const apForDDM = (editbox, ddm, stepName) => {
 
 const apForGeneral = () => {
     return `
-        <evaluation rule= student="@studentAnswer" teacher="@teacherAnswer">
+        <evaluation rule=rule_name student="@studentAnswer" teacher="@teacherAnswer">
         <feedback></feedback>`;
 }
 
@@ -119,6 +118,9 @@ const generateAnswerProcessing = () => {
             ddm = question.ddm;
             editboxEvalution = apForEditbox(editbox, ddm, stepName);
             ddmEvalution = apForDDM(editbox, ddm, stepName);
+            if (editorType == "tabed" && (editbox + ddm) == 0) {
+                generalRule = apForGeneral();
+            }
         }
         else {
             generalRule = apForGeneral();
@@ -126,12 +128,11 @@ const generateAnswerProcessing = () => {
         let spiltval = splitAnswerForAP(editbox, ddm, editorType);
         let apComment = `<!-- *************************************** Answer processing of ${stepName} *************************************** -->`;
         let functionAP = `
-        ${apComment}
-        <function name=anspro_${editorType}_${stepName} list={studentAnswer,teacherAnswer}>
-            ${spiltval}${generalRule}
-            ${editboxEvalution}
-            ${ddmEvalution}
-        </function>
+    ${apComment}
+    <function name=anspro_${editorType}_${stepName} list={studentAnswer,teacherAnswer}>
+        ${spiltval}${generalRule}
+        ${editboxEvalution}${ddmEvalution}
+    </function>
         `;
         answerProcessingArr.push(functionAP);
         i++;
@@ -157,13 +158,12 @@ const generateAnswerProcessing = () => {
             let spiltval = splitAnswerForAP(editbox, ddm, editorType);
             let apComment = `<!-- *************************************** Answer processing of ${stepName} *************************************** -->`;
             let functionAP = `
-        ${apComment}
-        <function name=anspro_${editorType}_${stepName} list={studentAnswer,teacherAnswer}>
-            ${spiltval}${generalRule}
-            ${editboxEvalution}
-            ${ddmEvalution}
-        </function>
-        `;
+    ${apComment}
+    <function name=anspro_${editorType}_${stepName} list={studentAnswer,teacherAnswer}>
+        ${spiltval}${generalRule}
+        ${editboxEvalution}${ddmEvalution}
+    </function>
+    `;
             answerProcessingArr.push(functionAP);
         }
         j++;

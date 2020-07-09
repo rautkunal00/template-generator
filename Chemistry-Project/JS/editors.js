@@ -8,15 +8,15 @@ const sourceGenerator = (editor, stepName, editbox, ddm) => {
     let editboxSource = [];
     for (j = 1; j <= editbox; j++) {
         let source = `
-        <text ref=${editor}_source_${stepName}_${j}><object name=ansed returnValue=ans_returned_${stepName}_${j}>\\\\editbox;[]</object></text>`;
+            <text ref=${editor}_source_${stepName}_${j}><object name=ansed returnValue=ans_returned_${stepName}_${j}>\\\\editbox;[]</object></text>`;
         editboxSource.push(source);
     }
     let ddmSource = [];
     for (j = editbox + 1; j <= (editbox + ddm); j++) {
         let source = `
-        <text ref=${editor}_source_${stepName}_${j}><object name=UIChoice returnValue=ans_returned_${stepName}_${j}>
-            <option value="1"></option>
-            <option value="2"></option></object></text>`;
+            <text ref=${editor}_source_${stepName}_${j}><object name=UIChoice returnValue=ans_returned_${stepName}_${j}>
+                <option value="1"></option>
+                <option value="2"></option></object></text>`;
         ddmSource.push(source);
     }
     return `${editboxSource.join("")}${ddmSource.join("")}`;
@@ -25,53 +25,52 @@ const sourceGenerator = (editor, stepName, editbox, ddm) => {
 const referenceGenerator = (editor, stepName, mode) => {
     let refVal = ((mode == 1) ? "INTERACTION" : "SOLUTION");
     return `
-        <TEXT REF=${refVal}>
-            @${editor}_editor_${stepName};
-        </TEXT>
-        <return value="${refVal}">`;
+            <TEXT REF=${refVal}>
+                @${editor}_editor_${stepName};
+            </TEXT>
+            <return value="${refVal}">`;
 
 }
 
 const staticGS = () => {
     return `
-        <TEXT REF=SOLUTION>
-        </TEXT>
-        <return value="SOLUTION">`;
+            <TEXT REF=SOLUTION>
+            </TEXT>
+            <return value="SOLUTION">`;
 
 }
 
 const ansedGenerator = (i, mode, editbox, ddm) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let feedbacktext = ((mode == 1) ? `
-            feedbacks:#{},` : ``);
+                feedbacks:#{},` : ``);
     let source = sourceGenerator("ansed", stepName, editbox, ddm);
     let reference = referenceGenerator("ansed", stepName, mode);
     let newEditor = `${source}
-        <var name=ansed_editor_${stepName} value=@.toolLayout.createTool('ansed','ansed_${stepName}','editor',#{
-            recall:text(),${feedbacktext}
-            features:#{
-                input:#{
-                    keyboard:{""}
-                },
-                syntax:#{
-                    chemistryMode:""
+            <var name=ansed_editor_${stepName} value=@.toolLayout.createTool('ansed','ansed_${stepName}','editor',#{
+                recall:text(),${feedbacktext}
+                features:#{
+                    input:#{
+                        keyboard:{""}
+                    },
+                    syntax:#{
+                        chemistryMode:""
+                    }
                 }
-            }
-        });>${reference}`;
+            });>${reference}`;
     return newEditor;
 }
 
 const formedGenerator = (i, mode, editbox, ddm) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
-    let feedbacktext = ((mode == 1) ? `
-            feedbacks:#{}` : ``);
+    let feedbacktext = ((mode == 1) ? `,
+                feedbacks:#{}` : ``);
     let source = sourceGenerator("formed", stepName, editbox, ddm);
     let reference = referenceGenerator("formed", stepName, mode);
     let newEditor = `${source}
-        <var name=formed_editor_${stepName} value=@.toolLayout.createTool('formed','formed_${stepName}','editor',#{
-            recall:text(),${feedbacktext}
-            }
-        });>${reference}`;
+            <var name=formed_editor_${stepName} value=@.toolLayout.createTool('formed','formed_${stepName}','editor',#{
+                recall:text()${feedbacktext}
+            });>${reference}`;
     return newEditor;
 }
 const mediaListGenerator = (editbox, ddm) => {
@@ -92,22 +91,21 @@ const tabedGenerator = (i, mode, editbox, ddm) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let mediaList = mediaListGenerator(editbox, ddm);
     let feedbacktext = ((mode == 1 && editbox != 0) ? `
-    mediaFeatures:#{ansed:#{feedbacks:#{}}},` : ``);
+                mediaFeatures:#{ansed:#{feedbacks:#{}}},` : ``);
     let source = sourceGenerator("tabed", stepName, editbox, ddm);
     let reference = referenceGenerator("tabed", stepName, mode);
     let newEditor = `${source}
-        <var name=tabed_editor_${stepName} value=@.toolLayout.createTool('tabed','tabed_${stepName}','editor',#{
-            recall:text(),${feedbacktext}
-            mediaList:{${mediaList}}
-            }
-        });>${reference}`;
+            <var name=tabed_editor_${stepName} value=@.toolLayout.createTool('tabed','tabed_${stepName}','editor',#{
+                recall:text(),${feedbacktext}
+                mediaList:{${mediaList}}
+            });>${reference}`;
     return newEditor;
 }
 
 const molecedGenerator = (i, mode) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let feedbacktext = ((mode == 1) ? `
-            feedbacks:#{},` : ``);
+                feedbacks:#{},` : ``);
     let reference = referenceGenerator("moleced", stepName, mode);
     let newEditor = `<var name=moleced_editor_${stepName} value=@.toolLayout.createTool('moleced','moleced_${stepName}','editor',#{
                 recall:text(),${feedbacktext}
@@ -128,42 +126,42 @@ const molecedGenerator = (i, mode) => {
 const elecedGenerator = (i, mode) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let feedbacktext = ((mode == 1) ? `
-            feedbacks:#{},` : ``);
+                feedbacks:#{},` : ``);
     let reference = referenceGenerator("eleced", stepName, mode);
     let newEditor = `<var name=eleced_editor_${stepName} value=@.toolLayout.createTool('eleced','eleced_${stepName}','editor',#{
-            recall: text(),${feedbacktext}
-            features: #{
-                display: #{
-                    yLabel: "",
-                    yLalels: "",
-                    elecedAnsedFontFace: "",
-                },
-                style: #{
-                    activeAndHighlightMode: "",
-                    bottomLabels: "",
-                    elecedType: "",
-                    labelPrefixNum: "",
-                    rowsShiftUp: "",
-                    saveSpace: false,
-                    showHorizontalLine: false,
-                    showCFHorizontalLine: false,
+                recall: text(),${feedbacktext}
+                features: #{
+                    display: #{
+                        yLabel: "",
+                        yLalels: "",
+                        elecedAnsedFontFace: "",
+                    },
+                    style: #{
+                        activeAndHighlightMode: "",
+                        bottomLabels: "",
+                        elecedType: "",
+                        labelPrefixNum: "",
+                        rowsShiftUp: "",
+                        saveSpace: false,
+                        showHorizontalLine: false,
+                        showCFHorizontalLine: false,
+                    }
                 }
-            }
-        });>${reference}`;
+            });>${reference}`;
     return newEditor;
 }
 
 const lewisedGenerator = (i, mode) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let feedbacktext = ((mode == 1) ? `
-            feedbacks:#{},` : ``);
+                feedbacks:#{},` : ``);
     let reference = referenceGenerator("lewised", stepName, mode);
     let newEditor = `<var name=lewiced_editor_${stepName} value=@.toolLayout.createTool('lewised','lewised_${stepName}','editor',#{
-            recall: text(),${feedbacktext}
-            menu:"complex",
-            height:250,
-            width:200
-        });>${reference}`;
+                recall: text(),${feedbacktext}
+                menu:"basic",
+                height:250,
+                width:200
+            });>${reference}`;
     return newEditor;
 }
 
@@ -181,7 +179,7 @@ const statObjectReference = () => {
         }
         for (k = 1; k <= (editbox + ddm); k++) {
             let source = `
-            <text ref=${editorType}_source_${stepName}_${k}></text>`;
+        <text ref=${editorType}_source_${stepName}_${k}></text>`;
             sourceArr.push(source);
         }
         i++;
@@ -199,7 +197,7 @@ const statObjectReference = () => {
             }
             for (k = 1; k <= (editbox + ddm); k++) {
                 let source = `
-            <text ref=${editorType}_source_${stepName}_${k}></text>`;
+        <text ref=${editorType}_source_${stepName}_${k}></text>`;
                 sourceArr.push(source);
             }
         }

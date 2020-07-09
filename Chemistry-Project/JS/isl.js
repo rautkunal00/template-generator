@@ -1,6 +1,6 @@
 
 
-const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, teacherAnswer, teacherHTML, finalAP) => {
+const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, extraTeacher, teacherAnswer, teacherHTML, finalAP) => {
   var isl_code = `
 <def>
 </def>
@@ -42,7 +42,6 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
         <var name=align_right value='style="text-align:right;"'>
         <var name=align_left value='style="text-align:left;"'>
         <var name=align_center value='style="text-align:center;"'> 
-
         ${staticSourceList}
 
       </def> 
@@ -52,7 +51,6 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
       ${statementStepsList}
     </function>
     ${triesModule}
-
     <function name=StatementModule list={}>
       <def module="."> 
       
@@ -61,9 +59,7 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
           <TEXT REF=STATEMENT></TEXT>
           <return value="STATEMENT">
         </function>
-
         ${statementSteps}
-
       </def>
     </function>
 
@@ -75,14 +71,12 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
     <function name=ResolutionModule list={partsRequested}>
       <def module=".">
 
-    <!-- *************************************** Show Me ***************************************-->
-    <function name=ResolutionModule_Main list={modeRequested}> 
-      <TEXT REF=RESOLUTION></TEXT>
-      <return value="RESOLUTION">
-    </function>
-
-      ${resolutionSteps}
-
+        <!-- *************************************** Show Me ***************************************-->
+        <function name=ResolutionModule_Main list={modeRequested}> 
+          <TEXT REF=RESOLUTION></TEXT>
+          <return value="RESOLUTION">
+        </function>
+        ${resolutionSteps}
       </def>
     </function>
 
@@ -92,6 +86,7 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
     </function>
     
     <function name=TeacherModule list={partRequested,mode}>
+      ${extraTeacher}
       &(teacherAnswerHash=#{};;);${teacherAnswer}
       <return value=@teacherAnswerHash>
     </function>
@@ -102,13 +97,11 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
     </function>
 
     <function name=HintModule list={}>
-     <return value=text()>
+      <return value=text()>
     </function>
     
   </QUESTION>
-
   ${finalAP}
-  
 </ITEM>
     `
   return isl_code;

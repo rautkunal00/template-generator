@@ -4,15 +4,15 @@ const htmlTeacherModule = () => {
     mainQuestions.forEach((question) => {
         let stepName = "I" + i;
         let ta = `
-            <var name=teacherAnswerHTML cond=("@partRequested;" == "${stepName}") value="&(text())">`;
+        <var name=teacherAnswerHTML cond=("@partRequested;" == "${stepName}") value="&(text())">`;
         taArr.push(ta);
         i++;
     });
     gsQuestions.forEach((question) => {
-        let stepName = "GS" + i;
+        let stepName = "GS" + j;
         if (!question.static) {
             let ta = `
-            <var name=teacherAnswerHTML cond=("@partRequested;" == "${stepName}") value="&(text())">`;
+        <var name=teacherAnswerHTML cond=("@partRequested;" == "${stepName}") value="&(text())">`;
             taArr.push(ta);
         }
         j++;
@@ -33,15 +33,19 @@ const generateTeacherAnswer = (stepName, editorType, editbox, ddm) => {
             answerArr.push(answer);
         }
         teacherAnswer = `
-            <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="${answerArr.join("")}">`;
+        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="${answerArr.join("")}">`;
     }
     else if (editorType == "tabed") {
         teacherAnswer = `
-            <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="\\\\set1;[]">`;
+        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="\\\\set1;[]">`;
+    }
+    else if (editorType == "moleced") {
+        teacherAnswer = `
+        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value=("@mode" == "solve" ? "@answer_list_${stepName};" : "@fin_recall_hash_${stepName};")>`;
     }
     else {
         teacherAnswer = `
-            <var name=teacherAnswerHash["${editorType}_${stepName}"] value=("@mode" == "solve" ? "&(text())" : "&(text())")>`;
+        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value=("@mode" == "solve" ? "&(text())" : "&(text())")>`;
     }
     return teacherAnswer;
 }
@@ -66,7 +70,7 @@ const teacherAnswerModule = () => {
         let stepName = "GS" + j;
         let editorType;
         if (!question.static) {
-            editorType == question.type;
+            editorType = question.type;
             let editbox = 0;
             let ddm = 0;
             if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
@@ -79,4 +83,53 @@ const teacherAnswerModule = () => {
         j++;
     });
     return `${teacherAnswerArr.join("")}`;
+}
+
+const molecedTA = (stepName) => {
+    return `
+        <var name=recall_hash_${stepName} value=#{
+            "tests":{
+            #{"name":"structureType", "structure": {"skeleton"}},
+            #{
+                "name": "checkBondAngle",
+                "rules": {"skeletal"},
+                "minAngle": 70
+            },
+            #{
+                "name": "reversibleGroups",
+                "tolerance": 10
+            }
+            },
+            "answers":@answer_list_${stepName};
+        }>
+        <var name=fin_recall_hash_${stepName} value="@userf.stringifyJSJSON(@recall_hash_${stepName};);">
+        `;
+}
+
+const extraTA = () => {
+    let extraTeacherAnswer = [], i = 1, j = 1;
+    mainQuestions.forEach((question) => {
+        let stepName = "I" + i;
+        let editorType = question.type;
+        let extTA = ``;
+        if (editorType == "moleced") {
+            extTA = molecedTA(stepName);
+            extraTeacherAnswer.push(extTA);
+        }
+        i++;
+    });
+    gsQuestions.forEach((question) => {
+        let stepName = "GS" + j;
+        let editorType;
+        if (!question.static) {
+            editorType = question.type;
+            let extTA = ``;
+            if (editorType == "moleced") {
+                extTA = molecedTA(stepName);
+                extraTeacherAnswer.push(extTA);
+            }
+        }
+        j++;
+    });
+    return `${extraTeacherAnswer.join("")}`;
 }

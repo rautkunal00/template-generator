@@ -50,7 +50,8 @@ const getStatementSteps = () => {
                 editor = lewisedGenerator(i, 1);
                 break;
         }
-        let completeEditor = `${comment}
+        let completeEditor = `
+        ${comment}
         <function name=StatementModule_${stepName} list={modeRequested}>
             ${editor}
         </function>
@@ -102,7 +103,8 @@ const getResolutionSteps = () => {
             default:
                 editor = staticGS();
         }
-        let completeEditor = `${comment}
+        let completeEditor = `
+        ${comment}
         <function name=ResolutionModule_${stepName} list={modeRequested}>
             ${editor}
         </function>
@@ -123,19 +125,19 @@ const calculateTries = () => {
         let tries = 3;
         if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
             tries = question.tries;
-            isActive = true;
         }
         if (tries > 0 && tries < 3) {
             let triesStatement = `"${stepName}":${tries}`;
             triesArr.push(triesStatement);
+            isActive = true;
         }
         i++;
     });
     if (isActive) {
         return `
-        <function name=StatementStepsTries list={}>
-            <return value={${triesArr.join(",")}}>
-        </function>
+    <function name=StatementStepsTries list={}>
+        <return value={${triesArr.join(",")}}>
+    </function>
     `;
     }
     else {
@@ -151,9 +153,10 @@ const generateISL = () => {
     const staticSourceList = statObjectReference();
     const triesModule = calculateTries();
     const apModuleList = ansproModuleList();
+    const extraTeacher = extraTA();
     const teacherAnswer = teacherAnswerModule();
     const teacherHTML = htmlTeacherModule();
     const finalAP = generateAnswerProcessing();
-    const islCode = getISLCode(statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, teacherAnswer, teacherHTML, finalAP);
+    const islCode = getISLCode(statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, extraTeacher, teacherAnswer, teacherHTML, finalAP);
     $("#isl-data").val(islCode);
 }
