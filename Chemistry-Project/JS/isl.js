@@ -1,6 +1,6 @@
 
 
-const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, apModuleList) => {
+const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, teacherAnswer, teacherHTML, finalAP) => {
   var isl_code = `
 <def>
 </def>
@@ -51,6 +51,7 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
     <function name=StatementSteps list={}>
       ${statementStepsList}
     </function>
+    ${triesModule}
 
     <function name=StatementModule list={}>
       <def module="."> 
@@ -91,17 +92,23 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
     </function>
     
     <function name=TeacherModule list={partRequested,mode}>
-      &(teacherAnswerHash=#{};;);
+      &(teacherAnswerHash=#{};;);${teacherAnswer}
       <return value=@teacherAnswerHash>
     </function>
 
     <function name=HtmlTeacherModule list={partRequested}>
-      <unvar name=teacherAnswerHTML>
+      <unvar name=teacherAnswerHTML>${teacherHTML}
       <return value="@teacherAnswerHTML">
+    </function>
+
+    <function name=HintModule list={}>
+     <return value=text()>
     </function>
     
   </QUESTION>
 
+  ${finalAP}
+  
 </ITEM>
     `
   return isl_code;

@@ -113,8 +113,34 @@ const getResolutionSteps = () => {
     return resolutionModuleArr.join("");
 }
 
-const HtmlTeacherModule = () => {
-
+const calculateTries = () => {
+    let triesArr = [];
+    let isActive = false;
+    let i = 1;
+    mainQuestions.forEach((question) => {
+        let stepName = "I" + i;
+        let editorType = question.type;
+        let tries = 3;
+        if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
+            tries = question.tries;
+            isActive = true;
+        }
+        if (tries > 0 && tries < 3) {
+            let triesStatement = `"${stepName}":${tries}`;
+            triesArr.push(triesStatement);
+        }
+        i++;
+    });
+    if (isActive) {
+        return `
+        <function name=StatementStepsTries list={}>
+            <return value={${triesArr.join(",")}}>
+        </function>
+    `;
+    }
+    else {
+        return ``;
+    }
 }
 
 const generateISL = () => {
@@ -123,7 +149,11 @@ const generateISL = () => {
     const statementSteps = getStatementSteps();
     const resolutionSteps = getResolutionSteps();
     const staticSourceList = statObjectReference();
+    const triesModule = calculateTries();
     const apModuleList = ansproModuleList();
-    const islCode = getISLCode(statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, apModuleList);
+    const teacherAnswer = teacherAnswerModule();
+    const teacherHTML = htmlTeacherModule();
+    const finalAP = generateAnswerProcessing();
+    const islCode = getISLCode(statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, teacherAnswer, teacherHTML, finalAP);
     $("#isl-data").val(islCode);
 }

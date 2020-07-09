@@ -108,7 +108,7 @@ const addButtonsListener = () => {
 }
 
 const addTableHeaders = () => {
-    $.getJSON("../Data/table-data.json", (hdata) => {
+    $.getJSON("../DATA/table-data.json", (hdata) => {
         let mth = $(".main-question-table thead tr");
         let gth = $(".gs-question-table thead tr");
         let mthlist = hdata.mainPartHeaders;
