@@ -8,7 +8,7 @@ const sourceGenerator = (editor, stepName, editbox, ddm) => {
     let editboxSource = [];
     let source = ``;
     for (j = 1; j <= editbox; j++) {
-        if (editor == "ansed") {
+        if (editor == "tabed") {
             source = `
         <text ref=${editor}_source_${stepName}_${j}><object name=ansed>\\\\editbox;[]</object></text>`;
         }
@@ -21,7 +21,7 @@ const sourceGenerator = (editor, stepName, editbox, ddm) => {
     let ddmSource = [];
     source = ``;
     for (j = editbox + 1; j <= (editbox + ddm); j++) {
-        if (editor == "ansed") {
+        if (editor == "tabed") {
             source = `
             <text ref=${editor}_source_${stepName}_${j}><object name=UIChoice>
                 <option value="1"></option>
