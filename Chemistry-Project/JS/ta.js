@@ -22,7 +22,7 @@ const htmlTeacherModule = () => {
 
 const generateTeacherAnswer = (stepName, editorType, editbox, ddm) => {
     let teacherAnswer = ``;
-    if (editorType == "ansed" || editorType == "formed") {
+    if (editorType == "formed") {
         let answerArr = [];
         for (i = 1; i <= editbox; i++) {
             let answer = `[ans_returned_${stepName}_${i}]=[\\\\editbox;[]];`;
@@ -34,6 +34,11 @@ const generateTeacherAnswer = (stepName, editorType, editbox, ddm) => {
         }
         teacherAnswer = `
         <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="${answerArr.join("")}">`;
+    }
+    else if (editorType == "ansed") {
+        let answer = `\\\\editbox;[]`;
+        teacherAnswer = `
+        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="${answer}">`;
     }
     else if (editorType == "tabed") {
         teacherAnswer = `

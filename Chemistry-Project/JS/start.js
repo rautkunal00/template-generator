@@ -38,6 +38,7 @@ const addFormButtonListener = () => {
         let tries = Number($("#mainTriesCount").val());
         let editbox = Number($("#mainEditboxCount").val());
         let ddm = Number($("#mainDropdownCount").val());
+        let extraFeature = $("#mainExtraFeature").prop("checked");
         $("#add-main-part").removeClass("hide");
         $("#add-gs-part").removeClass("hide");
         $("#mainPopupForm").remove();
@@ -46,6 +47,9 @@ const addFormButtonListener = () => {
             editorData.tries = tries;
             editorData.editbox = editbox;
             editorData.ddm = ddm;
+            if (type == "ansed" || type == "tabed") {
+                editorData.extraFeature = extraFeature;
+            }
         }
         mainQuestions.push(editorData);
         updateISL();
@@ -62,6 +66,7 @@ const addFormButtonListener = () => {
         let type = $("#gsEditorSelector").val();
         let editbox = Number($("#gsEditboxCount").val());
         let ddm = Number($("#gsDropdownCount").val());
+        let extraFeature = $("#gsExtraFeature").prop("checked");
         $("#add-gs-part").removeClass("hide");
         $("#add-main-part").removeClass("hide");
         $("#gsPopupForm").remove();
@@ -71,6 +76,9 @@ const addFormButtonListener = () => {
             if (type == "ansed" || type == "formed" || type == "tabed") {
                 editorData.editbox = editbox;
                 editorData.ddm = ddm;
+                if (type == "ansed" || type == "tabed") {
+                    editorData.extraFeature = extraFeature;
+                }
             }
         }
         gsQuestions.push(editorData);
@@ -141,6 +149,7 @@ const disableAllFieldsMain = () => {
     $("#mainEditboxCount").attr("disabled", "disabled");
     $("#mainDropdownCount").attr("disabled", "disabled");
     $("#submitMainForm").attr("disabled", "disabled");
+    disabledExtraFeaturesMain();
 }
 
 const enableForAnsedFormedTabedMain = () => {
@@ -150,16 +159,47 @@ const enableForAnsedFormedTabedMain = () => {
     $("#submitMainForm").removeAttr("disabled");
 }
 
+const enabledExtraFeaturesMain = () => {
+    clearExtraFeatureMain();
+    $("#mainExtraFeature").removeAttr("disabled");
+}
+
+const disabledExtraFeaturesMain = () => {
+    clearExtraFeatureMain();
+    $("#mainExtraFeature").attr("disabled", "disabled");
+}
+
+const clearExtraFeatureMain = () => {
+    $("#mainExtraFeature").removeAttr('checked');
+}
+
+const enabledExtraFeaturesGS = () => {
+    clearExtraFeatureGS();
+    $("#gsExtraFeature").removeAttr("disabled");
+}
+
+const disabledExtraFeaturesGS = () => {
+    clearExtraFeatureGS();
+    $("#gsExtraFeature").attr("disabled", "disabled");
+}
+
+const clearExtraFeatureGS = () => {
+    $("#gsExtraFeature").removeAttr('checked');
+}
+
 const onSelectEditorMain = () => {
     $("#mainEditorSelector").change(() => {
         let editorVal = $("#mainEditorSelector").val();
         disableAllFieldsMain();
         switch (editorVal) {
-            case "ansed":
-            case "formed":
             case "tabed":
+                enabledExtraFeaturesMain();
+            case "formed":
                 enableForAnsedFormedTabedMain();
                 break;
+            case "ansed":
+                $("#mainEditboxCount").val("1");
+                enabledExtraFeaturesMain();
             case "moleced":
             case "eleced":
             case "lewised":
@@ -176,6 +216,7 @@ const disableAllFieldsGs = () => {
     $("#gsEditboxCount").attr("disabled", "disabled");
     $("#gsDropdownCount").attr("disabled", "disabled");
     $("#submitGsForm").attr("disabled", "disabled");
+    disabledExtraFeaturesGS();
 }
 
 const enableForAnsedFormedTabedGs = () => {
@@ -203,11 +244,14 @@ const onSelectEditorGs = () => {
         let editorVal = $("#gsEditorSelector").val();
         disableAllFieldsGs();
         switch (editorVal) {
-            case "ansed":
-            case "formed":
             case "tabed":
+                enabledExtraFeaturesGS();
+            case "formed":
                 enableForAnsedFormedTabedGs();
                 break;
+            case "ansed":
+                $("#gsEditboxCount").val("1");
+                enabledExtraFeaturesGS();
             case "moleced":
             case "eleced":
             case "lewised":

@@ -10,7 +10,11 @@ const sourceGenerator = (editor, stepName, editbox, ddm) => {
     for (j = 1; j <= editbox; j++) {
         if (editor == "tabed") {
             source = `
-        <text ref=${editor}_source_${stepName}_${j}><object name=ansed>\\\\editbox;[]</object></text>`;
+            <text ref=${editor}_source_${stepName}_${j}><object name=ansed>\\\\editbox;[]</object></text>`;
+        }
+        else if (editor == "ansed") {
+            source = `
+            <text ref=${editor}_source_${stepName}_${j}>\\\\editbox;[]</text>`;
         }
         else {
             source = `
@@ -21,7 +25,7 @@ const sourceGenerator = (editor, stepName, editbox, ddm) => {
     let ddmSource = [];
     source = ``;
     for (j = editbox + 1; j <= (editbox + ddm); j++) {
-        if (editor == "tabed") {
+        if (editor == "tabed" || editor == "ansed") {
             source = `
             <text ref=${editor}_source_${stepName}_${j}><object name=UIChoice>
                 <option value="1"></option>
@@ -56,12 +60,13 @@ const staticGS = () => {
 
 }
 
-const ansedGenerator = (i, mode, editbox, ddm) => {
+const ansedGenerator = (i, mode, editbox, ddm, extraFeature) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let feedbacktext = ((mode == 1) ? `
                 feedbacks:#{},` : ``);
     let source = sourceGenerator("ansed", stepName, editbox, ddm);
     let reference = referenceGenerator("ansed", stepName, mode);
+    let addExtra = ((extraFeature) ? `` : ``);
     let newEditor = `${source}
             <var name=ansed_editor_${stepName} value=@.toolLayout.createTool('ansed','ansed_${stepName}','editor',#{
                 recall:text(),${feedbacktext}
@@ -72,7 +77,7 @@ const ansedGenerator = (i, mode, editbox, ddm) => {
                     syntax:#{
                         chemistryMode:""
                     }
-                }
+                }${addExtra}
             });>${reference}`;
     return newEditor;
 }
@@ -103,17 +108,26 @@ const mediaListGenerator = (editbox, ddm) => {
     return mediaList;
 }
 
-const tabedGenerator = (i, mode, editbox, ddm) => {
+const tabedGenerator = (i, mode, editbox, ddm, extraFeature) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let mediaList = mediaListGenerator(editbox, ddm);
     let feedbacktext = ((mode == 1 && editbox != 0) ? `
                 mediaFeatures:#{ansed:#{feedbacks:#{}}},` : ``);
+    let cellFeedback = ((mode == 1) ? `
+                        feedbacks:#{
+                        },`: ``);
+    let addExtra = ((!extraFeature && editbox > 1) ? `` : `,
+                cellFeatures:#{
+                    cell_autoid_0:#{${cellFeedback}
+                        correctAnswers:{}
+                    }
+                }`);
     let source = sourceGenerator("tabed", stepName, editbox, ddm);
     let reference = referenceGenerator("tabed", stepName, mode);
     let newEditor = `${source}
             <var name=tabed_editor_${stepName} value=@.toolLayout.createTool('tabed','tabed_${stepName}','editor',#{
                 recall:text(),${feedbacktext}
-                mediaList:{${mediaList}}
+                mediaList:{${mediaList}}${addExtra}
             });>${reference}`;
     return newEditor;
 }

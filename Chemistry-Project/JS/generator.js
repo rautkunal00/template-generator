@@ -24,21 +24,25 @@ const getStatementSteps = () => {
         let editorType = question.type;
         let editbox = 0;
         let ddm = 0;
+        let extraFeature = false;
         if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
             editbox = question.editbox;
             ddm = question.ddm;
+            if (editorType == "ansed" || editorType == "tabed") {
+                extraFeature = question.extraFeature;
+            }
         }
         const comment = `<!-- *************************************** I` + i + ` *************************************** --> `;
         let editor = ` `;
         switch (editorType) {
             case "ansed":
-                editor = ansedGenerator(i, 1, editbox, ddm);
+                editor = ansedGenerator(i, 1, editbox, ddm, extraFeature);
                 break;
             case "formed":
                 editor = formedGenerator(i, 1, editbox, ddm);
                 break;
             case "tabed":
-                editor = tabedGenerator(i, 1, editbox, ddm);
+                editor = tabedGenerator(i, 1, editbox, ddm, extraFeature);
                 break;
             case "moleced":
                 editor = molecedGenerator(i, 1);
@@ -75,21 +79,25 @@ const getResolutionSteps = () => {
         }
         let editbox = 0;
         let ddm = 0;
+        let extraFeature = false;
         if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
             editbox = question.editbox;
             ddm = question.ddm;
+            if (editorType == "ansed" || editorType == "tabed") {
+                extraFeature = question.extraFeature;
+            }
         }
         const comment = `<!-- *************************************** GS` + i + ` *************************************** --> `;
         let editor = ` `;
         switch (editorType) {
             case "ansed":
-                editor = ansedGenerator(i, 2, editbox, ddm);
+                editor = ansedGenerator(i, 2, editbox, ddm, extraFeature);
                 break;
             case "formed":
                 editor = formedGenerator(i, 2, editbox, ddm);
                 break;
             case "tabed":
-                editor = tabedGenerator(i, 2, editbox, ddm);
+                editor = tabedGenerator(i, 2, editbox, ddm, extraFeature);
                 break;
             case "moleced":
                 editor = molecedGenerator(i, 2);

@@ -28,6 +28,10 @@ let mainQueForm = () => {
                     <td><input type=number id="mainDropdownCount" name="mainDropdownCount" disabled="disabled" /></td>
                 </tr>
                 <tr>
+                    <td>Extra Features</td>
+                    <td><input type=checkbox id="mainExtraFeature" name="mainExtraFeature" disabled="disabled" /></td>
+                </tr>
+                <tr>
                     <td><button id="cancelMainForm">Cancel</button></td>
                     <td><button id="submitMainForm" disabled="disabled">Submit</button></td>
                 </tr>
@@ -65,6 +69,10 @@ let gsQueForm = () => {
                 <tr>
                     <td>No. of Dropdowns</td>
                     <td><input type=number id="gsDropdownCount" name="gsDropdownCount" disabled="disabled" /></td>
+                </tr>
+                <tr>
+                    <td>Extra Features</td>
+                    <td><input type=checkbox id="gsExtraFeature" name="gsExtraFeature" disabled="disabled" /></td>
                 </tr>
                 <tr>
                     <td><button id="cancelGsForm">Cancel</button></td>

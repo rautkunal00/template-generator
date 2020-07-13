@@ -10,16 +10,14 @@ const updateDataInTable = () => {
     mainQuestions.forEach((question) => {
         const stepName = (i + 1);
         const editorType = question.type;
-        let noOfTries, noOfEditbox, noOfddm;
+        let noOfTries = 3, noOfEditbox = 0, noOfddm = 0, extraFeature = false;
         if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
             noOfTries = question.tries;
             noOfEditbox = question.editbox;
             noOfddm = question.ddm;
-        }
-        else {
-            noOfTries = 3;
-            noOfEditbox = 0;
-            noOfddm = 0;
+            if (editorType == "ansed" || editorType == "tabed") {
+                extraFeature = question.extraFeature;
+            }
         }
         let row = `<tr>
                     <td>I${stepName}</td>
@@ -27,6 +25,7 @@ const updateDataInTable = () => {
                     <td>${noOfTries}</td>
                     <td>${noOfEditbox}</td>
                     <td>${noOfddm}</td>
+                    <td>${extraFeature}</td>
                 </tr>`;
         mainTableData.push(row);
         i++;
@@ -34,22 +33,16 @@ const updateDataInTable = () => {
     gsQuestions.forEach((gs) => {
         const stepName = (j + 1);
         const isStatic = gs.static;
-        let editorType, noOfEditbox, noOfddm;
+        let editorType = "NA", noOfEditbox = 0, noOfddm = 0, extraFeature = false;
         if (!isStatic) {
             editorType = gs.type;
             if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
                 noOfEditbox = gs.editbox;
                 noOfddm = gs.ddm;
+                if (editorType == "ansed" || editorType == "tabed") {
+                    extraFeature = gs.extraFeature;
+                }
             }
-            else {
-                noOfEditbox = 0;
-                noOfddm = 0;
-            }
-        }
-        else {
-            editorType = "NA";
-            noOfEditbox = 0;
-            noOfddm = 0;
         }
 
         let row = `<tr>
@@ -58,6 +51,7 @@ const updateDataInTable = () => {
                     <td>${editorType}</td>
                     <td>${noOfEditbox}</td>
                     <td>${noOfddm}</td>
+                    <td>${extraFeature}</td>
                 </tr>`;
         gsTableData.push(row);
         j++;
