@@ -6,17 +6,33 @@ mode:
 
 const sourceGenerator = (editor, stepName, editbox, ddm) => {
     let editboxSource = [];
+    let source = ``;
     for (j = 1; j <= editbox; j++) {
-        let source = `
+        if (editor == "ansed") {
+            source = `
+        <text ref=${editor}_source_${stepName}_${j}><object name=ansed>\\\\editbox;[]</object></text>`;
+        }
+        else {
+            source = `
             <text ref=${editor}_source_${stepName}_${j}><object name=ansed returnValue=ans_returned_${stepName}_${j}>\\\\editbox;[]</object></text>`;
+        }
         editboxSource.push(source);
     }
     let ddmSource = [];
+    source = ``;
     for (j = editbox + 1; j <= (editbox + ddm); j++) {
-        let source = `
-            <text ref=${editor}_source_${stepName}_${j}><object name=UIChoice returnValue=ans_returned_${stepName}_${j}>
+        if (editor == "ansed") {
+            source = `
+            <text ref=${editor}_source_${stepName}_${j}><object name=UIChoice>
                 <option value="1"></option>
                 <option value="2"></option></object></text>`;
+        }
+        else {
+            source = `
+        <text ref=${editor}_source_${stepName}_${j}><object name=UIChoice returnValue=ans_returned_${stepName}_${j}>
+            <option value="1"></option>
+            <option value="2"></option></object></text>`;
+        }
         ddmSource.push(source);
     }
     return `${editboxSource.join("")}${ddmSource.join("")}`;
@@ -76,7 +92,7 @@ const formedGenerator = (i, mode, editbox, ddm) => {
 const mediaListGenerator = (editbox, ddm) => {
     let mediaList = 'html';
     if (editbox != 0) {
-        mediaList = mediaList.concat(",ansed");
+        mediaList = mediaList.concat(",ansed,ansedchem");
     }
     if (ddm != 0) {
         mediaList = mediaList.concat(",UIChoice");

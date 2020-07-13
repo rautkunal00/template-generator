@@ -3,6 +3,7 @@
 const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, extraTeacher, teacherAnswer, teacherHTML, finalAP) => {
   var isl_code = `
 <def>
+  <include module=userfChemistry>
 </def>
 
 <description>
