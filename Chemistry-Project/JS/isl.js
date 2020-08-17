@@ -32,6 +32,8 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
   <QUESTION>
     <function name=TrunkModule list={}>
       <def module=".">
+	  
+		<!-- *************************************** Styling *************************************** -->
 
         <var name=varEqualTo value=@userf.disp("=")>
         <var name=indent_start value="@userf.indent_begin();">
@@ -43,6 +45,8 @@ const getISLCode = (statementStepsList, resolutionStepsList, statementSteps, res
         <var name=align_right value='style="text-align:right;"'>
         <var name=align_left value='style="text-align:left;"'>
         <var name=align_center value='style="text-align:center;"'> 
+		
+		<!-- *************************************** Question ***************************************-->
         ${staticSourceList}
 
       </def> 

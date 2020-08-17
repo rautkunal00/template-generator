@@ -91,7 +91,7 @@ const apForDDM = (editbox, ddm, stepName) => {
             }
         }
         let ddmEvalution = `
-        <evaluation rule=choice student="@('.student_ans_returned_${stepName}_${i};');" teacher="@('.teacher_ans_returned_${stepName}_${i};');">
+        <evaluation rule=choice student="@('.student_ans_returned_${stepName}_${i}');" teacher="@('.teacher_ans_returned_${stepName}_${i}');">
         <feedback></feedback>${feedbackStatement}`;
         ddmEvalutionArr.push(ddmEvalution);
     }
