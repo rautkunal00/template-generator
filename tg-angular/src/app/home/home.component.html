@@ -1,0 +1,138 @@
+<div class="container-fluid reveal" [ngClass]="{'gibbs': homeData.fillAnswer === 'wfa'}">
+
+  <form class="justify-content-center align-center-locally" [formGroup]="homeFormGroup" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-info" [ngClass]="{'active': homeData.fillAnswer === 'wofa'}">
+            <input type="radio" name="fillAnswer" id="wofa" value="wofa" [checked]="true" formControlName="fillAnswer" #fa2 (change)="changeFAToggle($event,fa2.value)"> Without Fill-Answer
+          </label>
+          <label class="btn btn-info" [ngClass]="{'active': homeData.fillAnswer === 'wfa'}">
+            <input type="radio" name="fillAnswer" id="wfa" value="wfa" formControlName="fillAnswer" #fa1 (change)="changeFAToggle($event,fa1.value)"> With Fill-Answer
+          </label>
+
+        </div>
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-md-4"></div>
+      <div class="col-md-2 my-1">
+        <label  class="form-check-label">No. of Question Parts:</label>
+      </div>
+      <div class="col-md-2 my-1">
+        <label  class="form-check-label">No. of Guided Solutions:</label>
+      </div>
+      <div class="col-auto my-1"></div>
+    </div>
+    <div class="row mb-2 align-items-center">
+      <div class="col-md-4 align-items-right my-1 align-right-locally">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="accCheck" formControlName="accessible" >
+          <label class="form-check-label" for="accCheck">
+            Accessible
+          </label>
+        </div>
+      </div>
+      <div class="col-md-2 my-1">
+        <input type="number" min="0" class="form-control" #partInput (change)="onPartInputChange(partInput)" placeholder="No. of Question Parts" formControlName="partSize">
+      </div>
+      <div class="col-md-2 my-1">
+        <input type="number" min="0" class="form-control" #gsInput (change)="onGSInputChange(gsInput)" placeholder="No. of Guided Solutions" formControlName="gsSize">
+      </div>
+      <div class="col-auto my-1">
+        <div class="form-check" *ngIf="homeData.fillAnswer === 'wofa'">
+          <input class="form-check-input" type="checkbox" id="splitCheck" formControlName="split" >
+          <label class="form-check-label" for="splitCheck">
+            Split algo?
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary" style="display:none;">Submit</button>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="container-fluid">
+  <div class="row align-center-locally">
+    <div class="col">
+      <form [formGroup]="tableFormGroup" (ngSubmit)="onGenerate()">
+        <table class="table table-hover table-sm table-bordered table-responsive">
+          <thead class="thead-dark">
+            <tr>
+              <th class="valign-middle-locally" scope="col">Step Name</th>
+              <th class="valign-middle-locally" scope="col">Static</th>
+              <th class="valign-middle-locally" scope="col">Editor Type</th>
+              <th class="valign-middle-locally" scope="col">No. of Editbox object</th>
+              <th class="valign-middle-locally" scope="col">No. of Dropdown object</th>
+              <th class="valign-middle-locally" scope="col">No. of Tries</th>
+              <th class="valign-middle-locally" scope="col">Has Step Label?</th>
+              <th class="valign-middle-locally" scope="col">Separate AP for Dropdown</th>
+              <th class="valign-middle-locally" scope="col">No. of Active Statements</th>
+              <th class="valign-middle-locally" scope="col">No. of Passive Statements</th>
+              <th class="valign-middle-locally" scope="col">Position of editor</th>
+              <th class="valign-middle-locally" scope="col">Position of table (Comma separated list)</th>
+              <th class="valign-middle-locally" scope="col">Buttons</th>
+              <th class="valign-middle-locally" scope="col">Features</th>
+              <th class="valign-middle-locally" scope="col">Feedbacks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container formArrayName="tableRows" *ngFor="let group of getFormControls.controls ; let i=index">
+            <tr style="vertical-align: middle;" [formGroupName]="i">
+              <td class="valign-middle-locally">{{tabledata[i].stepname}}</td>
+              <td class="valign-middle-locally"><input type="checkbox" #tbStatic class="" (change)="toggleSelection(tbStatic,i)" formControlName="static" *ngIf="tabledata[i].type === 'GS'"></td>
+              <td class="valign-middle-locally">
+                <select class="btn btn-sm dropdown-toggle" formControlName="editorType">
+                  <option value=1 class="dropdown-item form-control">formed</option>
+                  <option value=2 class="dropdown-item form-control">tabed</option>
+                  <option value=3 class="dropdown-item form-control">figed</option>
+                </select>
+              </td>
+              <td class="valign-middle-locally"><input type="number" min="0" #tbtotalEB class="form-control form-control-custom" formControlName="totalEB"></td>
+              <td class="valign-middle-locally"><input type="number" min="0" #tbtotalDDM class="form-control form-control-custom" formControlName="totalDDM"></td>
+              <td class="valign-middle-locally"><input type="number" min="1" #tbtries class="form-control form-control-custom" formControlName="tries" *ngIf="tabledata[i].type === 'I'"></td>
+              <td class="valign-middle-locally"><input type="checkbox" #tbstepLabel class="" formControlName="stepLabel" *ngIf="tabledata[i].type === 'GS'"></td>
+              <td class="valign-middle-locally"><input type="checkbox" #tbseparateDDMAP class="" formControlName="separateDDMAP"></td>
+              <td class="valign-middle-locally"><input type="number" min="0" #tbtotalActStmt class="form-control form-control-custom" formControlName="totalActStmt"></td>
+              <td class="valign-middle-locally"><input type="number" min="0" #tbtotalPassStmt class="form-control form-control-custom" formControlName="totalPassStmt"></td>
+              <td class="valign-middle-locally"><input type="number" min="0" #tbeditorPos class="form-control form-control-custom" formControlName="editorPos"></td>
+              <td class="valign-middle-locally"><input type="text" #tbtablePos class="form-control form-control-custom" formControlName="tablePos"></td>
+              <td class="valign-middle-locally" width=100>
+                  <select multiple formControlName="buttons" style="max-width: 100px; height:63px;" class=" form-control-custom-1 form-control">
+                    <option *ngFor="let button of buttons" value="{{button}}">{{button}}</option>
+                  </select>
+              </td>
+              <td class="valign-middle-locally" width=110>
+                <select multiple formControlName="features" style="max-width: 110px; height:63px;" class=" form-control-custom-1 form-control">
+                  <option *ngFor="let feature of features" value="{{feature}}">{{feature}}</option>
+                </select>
+              </td>
+              <td class="valign-middle-locally" width=220>
+                <select multiple formControlName="feedbacks" style="max-width: 220px; height:63px;" class=" form-control-custom-1 form-control">
+                  <option *ngFor="let feedback of feedbacks" value="{{feedback}}">{{feedback}}</option>
+                </select>
+              </td>
+            </tr>
+          </ng-container>
+          </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Create Template</button>
+      </form>
+    </div>
+  </div>
+
+  <!--p>Form Data:  {{tableFormGroup.value | json}}</p>
+  <p>Table Data:  {{tabledata | json}}</p-->
+
+  <pre><code>
+    <textarea rows="150" cols="165">
+      {{finalTemplate}}
+    </textarea>
+    <textarea rows="50" cols="165">
+      {{englishTemplate}}
+    </textarea>
+  </code></pre>
+
+</div>
+
+
+

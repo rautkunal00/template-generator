@@ -683,7 +683,7 @@ function generateToolWithObjects(moduleNumber,toolNumber,toolStep,part,editext){
     let button_feature_t=``;
     let button_feature_f=``;
     let feature_t=``;
-    button_feature += (buttons.length>0) ? `,\n\t\t\t\t\textraButtons:{${buttons}}` : ``;
+    button_feature += (buttons.length>0) ? `,\n\t\textraButtons:{${buttons}}` : ``;
     button_feature_t += (buttons.length>0) ? `,\n\t\t\t\t\textraButtons:{${buttons}}` : ``;
     button_feature_f += (buttons.length>0) ? `,\n\t\t\tmenu:${buttons}` : ``;
     if(feedbacks.length>0 && features.length>0)

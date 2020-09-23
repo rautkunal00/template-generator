@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+
+.align-center-locally {
+  text-align: center;
+}
+
+.align-right-locally {
+  text-align: right;
+}
+
+.valign-middle-locally {
+  vertical-align: middle !important;
+}
+
+.form-control-custom {
+  padding: 5px 5px;
+  height: auto;
+}
+
+.form-control-custom-1 {
+  padding: 1px 5px;
+  height: auto;
+}
+
+.reveal {
+  background-color: #f4f1fa;
+}
+
+.gibbs {
+  background-color: aliceblue;
+}
