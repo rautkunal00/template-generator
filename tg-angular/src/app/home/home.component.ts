@@ -1,4 +1,3 @@
-import { Feature } from './../../../../WeatherApp/weather-app/src/app/shared/mapbox-service.service';
 import { HomeData } from './../shared/home-data';
 import { TableData } from './../shared/table-data';
 import { Component, OnInit } from '@angular/core';
