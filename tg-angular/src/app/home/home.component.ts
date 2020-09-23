@@ -2,7 +2,6 @@ import { HomeData } from './../shared/home-data';
 import { TableData } from './../shared/table-data';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { IDropdownSettings } from 'ng-multiselect-dropdown';
 
 @Component({
   selector: 'app-home',
