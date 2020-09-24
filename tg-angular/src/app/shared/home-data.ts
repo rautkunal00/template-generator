@@ -4,4 +4,7 @@ export class HomeData {
   fillAnswer: string;
   accessible: boolean;
   split: boolean;
+  interchangefn: boolean;
+  isqrt: boolean;
+  numlist: boolean;
 }

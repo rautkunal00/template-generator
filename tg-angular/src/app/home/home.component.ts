@@ -18,7 +18,10 @@ export class HomeComponent implements OnInit {
     gsSize: new FormControl(0),
     fillAnswer: new FormControl('wofa'),
     accessible: new FormControl(false),
-    split: new FormControl(false)
+    split: new FormControl(false),
+    interchangefn: new FormControl(false),
+    isqrt: new FormControl(false),
+    numlist: new FormControl(false)
   });
   tableFormGroup: FormGroup;
   control: FormArray;
@@ -100,7 +103,10 @@ export class HomeComponent implements OnInit {
       gsSize: 0,
       fillAnswer: faval,
       accessible: false,
-      split: false
+      split: false,
+      interchangefn: false,
+      isqrt: false,
+      numlist: false
     });
     this.homeData = this.homeFormGroup.value;
     this.generateTableView();
@@ -229,7 +235,6 @@ export class HomeComponent implements OnInit {
       this.tabledata[index] = Object.assign(this.tabledata[index], this.tableFormGroup.controls.tableRows.value[index]);
     })
 
-    
     let statementModuleListQuoted = [];
     let resolutionModuleListQuoted = [];
     let statementModuleList = [];
@@ -272,6 +277,7 @@ export class HomeComponent implements OnInit {
     let splitcodeArray = [];
     let splitInstanceblock = "";
     let adaLines = "";
+    let customFunction = this.addCustomFunction();
     if (this.homeData.split) {
       splitcodeArray = this.getSplitCodeLines();
       splitInstanceblock= this.getSplitCodeInstanceblock();
@@ -283,11 +289,11 @@ export class HomeComponent implements OnInit {
 
     if (this.homeData.fillAnswer === "wfa") {
       let teacherHTMLModule = this.generateHTMLTeacherModuleWithFA();
-      this.finalTemplate = this.getISLCodeWithFA(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label,adaLines)
+      this.finalTemplate = this.getISLCodeWithFA(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label,adaLines,customFunction)
 
     } else {
       let teacherHTMLModule = this.generateHTMLTeacherModule();
-      this.finalTemplate = this.getISLCode(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label,splitcodeArray, splitInstanceblock,adaLines)
+      this.finalTemplate = this.getISLCode(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label,splitcodeArray, splitInstanceblock,adaLines,customFunction)
     }
     this.englishTemplate = this.getENGLISHCode()
     /*console.log("very funny \n" + statementModuleReturnValues + "\n" +
@@ -295,6 +301,85 @@ export class HomeComponent implements OnInit {
     ansproMapping + "\n" + evaluationBlocks + "\n" + teacherModule + "\n" + ans_teacher + "\n" +
     no_of_tries + "\n" + has_step_label)*/
   }
+  addCustomFunction() {
+    let customFunctionText = ``;
+    if (this.homeData.interchangefn) {
+      customFunctionText += `
+      <function name=interchangableAP list={gs,num}>
+      <var name=tlist value={}> 
+      <var name=slist value={}> 
+      <var name=numLength value=length(@num;)>
+      <for name=k value=1 cond=(@k; <= @numLength;) next=(@k; + 1)>
+        &(addElem(tlist, "@("teacher_answer@num[@k;];");"));
+        &(addElem(slist, "@("student_answer@num[@k;];");"));
+      </for>
+      <for name=i value=1 cond=(@i;<=@numLength;) next=(@i;+1)>  
+        <for name=j value=1 cond=(@j;<=@numLength;) next=(@j;+1)>
+          <evaluation rule=arith2 teacher="@tlist[@j;];" student="@slist[@i;];">
+          <feedback>
+            &(@userFeedback.arithGen());
+            <var name=check value="@itemAnspro.getCurrentFeedbackField('value');">
+          </feedback>
+          <if cond=(@j;<=9)>
+            &(@itemAnspro.storeFeedback("@gs;.0@num[@i;];"););
+          <else>
+            &(@itemAnspro.storeFeedback("@gs;.@num[@i;];"););
+          </if>
+          <if cond=('@check' == "Correct")>       
+                &(setElemAt(tlist,">>",@j;));
+                <var name=j value=@numLength;>            
+          </if>
+        </for>            
+      </for>
+    </function>
+    <!--
+    How to call :
+    &(@interchangableAP("GS2",{3,4,5}););
+    &(@itemAnspro.registerFeedback("GS2.03"))
+    &(@itemAnspro.registerFeedback("GS2.04"))
+    &(@itemAnspro.registerFeedback("GS2.05")) 
+    -->
+    `;
+    }
+    if (this.homeData.isqrt) {
+      customFunctionText += `
+      <function name=retSqrtNot list={num,anspro}>
+        <var name=sqrt_val value=(@userf.simplify_sqrt(@num;))>
+        <if cond=(@sqrt_val[1]==1 && @sqrt_val[2]!=1 && @anspro;==1)>
+          <return value="\\sqrt;[@num;]">
+        <else cond=(@sqrt_val[1]==1 && @sqrt_val[2]!=1 && @anspro;==0)>
+          <return value="<sqrt>@num;</sqrt>">
+        <else>
+          <return value="@sqrt_val[1];">
+        </if>
+      </function>
+      `;
+    }
+    if (this.homeData.numlist) {
+      customFunctionText += `
+      <function name=generate_num_list list={start_num, end_num, step, exclude_lst}>
+        <var name=step value=("@step;"=="" ? 1 : @step;)>
+        <var name=num_list value={}>
+        <for name=start value=@start_num cond=(@start;<=@end_num;) next=(@start;+@step;)>
+          <if cond=(hasElem(@exclude_lst;,@start;)==0)>
+            &(addElem(num_list,@start;));
+          </if>
+        </for>
+        <return value=@num_list;>
+      </function>
+      <!--
+      generate_num_list: return list of num/floats      
+      1.start_num: starting number of the list            
+      2.end_num: ending number include in the list 
+      3.step: next number increment 
+      4.exclude_lst: exclude the numbers in this list
+      -->
+      `;
+    }
+    
+    return customFunctionText;
+  }
+
   getAdaCodeLines() {
     const adaLines = '<var name=nlh value=\"@.newLineHint;\">';
     return adaLines;
@@ -1149,11 +1234,12 @@ export class HomeComponent implements OnInit {
     return teacherHTMLModule.join("");
   }
 
-  getISLCode(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label, splitcodeArray, splitInstanceblock, adaLines) {
+  getISLCode(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label, splitcodeArray, splitInstanceblock, adaLines,customFunction) {
     var explaination=this.ShowMeTexts.join("");
     var isl_code = `
   <def>
     ${(splitcodeArray.length) ? splitcodeArray[0] : ''}
+    ${customFunction}
   </def>
 
   <description>
@@ -1259,11 +1345,11 @@ export class HomeComponent implements OnInit {
   }
 
   //with fillAnswer
-  getISLCodeWithFA(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label,adaLines) {
+  getISLCodeWithFA(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label,adaLines,customFunction) {
     var explaination=this.ShowMeTexts.join("");
     var isl_code = `
   <def>
-
+    ${customFunction}
   </def>
 
   <description>
