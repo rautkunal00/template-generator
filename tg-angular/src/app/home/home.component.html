@@ -107,7 +107,7 @@
                 </select>
               </td>
               <td class="valign-middle-locally" width=220>
-                <select multiple formControlName="feedbacks" style="max-width: 220px; height:63px;" class=" form-control-custom-1 form-control">
+                <select multiple formControlName="feedbacks" style="max-width: 220px; height:63px;" class=" form-control-custom-1 form-control" *ngIf="tabledata[i].type === 'I'">
                   <option *ngFor="let feedback of feedbacks" value="{{feedback}}">{{feedback}}</option>
                 </select>
               </td>
