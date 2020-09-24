@@ -87,6 +87,7 @@ export class HomeComponent implements OnInit {
   onSubmit() {
     this.homeData = this.homeFormGroup.value;
     this.generateTableView();
+    this.ShowMeTexts = [];
     this.finalTemplate = "";
     this.englishTemplate = "";
   }
@@ -103,6 +104,7 @@ export class HomeComponent implements OnInit {
     });
     this.homeData = this.homeFormGroup.value;
     this.generateTableView();
+    this.ShowMeTexts = [];
     this.finalTemplate = "";
     this.englishTemplate = "";
   }
@@ -227,6 +229,7 @@ export class HomeComponent implements OnInit {
       this.tabledata[index] = Object.assign(this.tabledata[index], this.tableFormGroup.controls.tableRows.value[index]);
     })
 
+    
     let statementModuleListQuoted = [];
     let resolutionModuleListQuoted = [];
     let statementModuleList = [];
@@ -235,6 +238,15 @@ export class HomeComponent implements OnInit {
     this.object_reference = [];
     this.object_reference_text = [];
     this.object_reference_editor = [];
+    this.ShowMeTexts = [];
+    this.englishFileTexts = [];
+    this.finalTemplate = "";
+    this.englishTemplate = "";
+    this.countEditor = [];
+    this.countDDm =[];
+    this.toolType =[];
+    this.ans_editor = [];
+    this.teacherModule =[];
 
     this.tabledata.forEach((item) => {
       if (item.type == "I") {
@@ -250,7 +262,9 @@ export class HomeComponent implements OnInit {
     let statementSteps = this.getStatementSteps(statementModuleList);
     let resolutionSteps = this.getResolutionSteps(resolutionModuleList);
     let ansproMapping = this.getAnsproMapping()
-    let evaluationBlocks = this.generateEvaluations();
+    let ansproRule = this.getAnsproRule()
+    let ansproCatches = this.getAnsproCatches()
+    let evaluationBlocks = this.generateEvaluations(ansproRule,ansproCatches);
     let teacherModule = this.generateTeacherModule();
     let ans_teacher = this.generateTeacherSimple();
     let no_of_tries = this.generateTries();
@@ -276,10 +290,10 @@ export class HomeComponent implements OnInit {
       this.finalTemplate = this.getISLCode(statementModuleReturnValues, resolutionModuleReturnValues, statementSteps, resolutionSteps, ansproMapping, evaluationBlocks, teacherModule, teacherHTMLModule, ans_teacher, no_of_tries, has_step_label,splitcodeArray, splitInstanceblock,adaLines)
     }
     this.englishTemplate = this.getENGLISHCode()
-    console.log("very funny \n" + statementModuleReturnValues + "\n" +
+    /*console.log("very funny \n" + statementModuleReturnValues + "\n" +
     resolutionModuleReturnValues + "\n" + statementSteps + "\n" + resolutionSteps + "\n" +
     ansproMapping + "\n" + evaluationBlocks + "\n" + teacherModule + "\n" + ans_teacher + "\n" +
-    no_of_tries + "\n" + has_step_label)
+    no_of_tries + "\n" + has_step_label)*/
   }
   getAdaCodeLines() {
     const adaLines = '<var name=nlh value=\"@.newLineHint;\">';
@@ -371,11 +385,19 @@ export class HomeComponent implements OnInit {
             }
         }
         for(let j=1; j<=passivestatements; j++) {
-            passiveModuleTexts += `
-                <p>%I`+i+`_`+`passivetext`+`_`+j+`;`+`</p>`
-        }
-        for(let j=1; j<=passivestatements; j++) {
-            passivestatementModuleTexts += `<p>&(text(I`+i+`_`+`passivetext`+`_`+j+`));`+`</p>`
+          let booll=array_table.includes(textstatements+j);
+          let table_num=textstatements+j;
+            if(booll) {
+              passiveModuleTexts += `
+                %i`+i+`_`+`table`+`_`+table_num+`;`
+
+                passivestatementModuleTexts += `&(text(i`+i+`_`+`table`+`_`+table_num+`));`
+            } else {
+              passiveModuleTexts += `
+                <p>%I`+i+`_`+`passivetext`+`_`+table_num+`;`+`</p>`
+
+                passivestatementModuleTexts += `<p>&(text(I`+i+`_`+`passivetext`+`_`+table_num+`));`+`</p>`
+            }
         }
         passivecode=passivestatements!=0 ? `
                 &(("@modeRequested;"=="static") ? "${passivestatementModuleTexts}"  : "");` : ``;
@@ -413,9 +435,9 @@ export class HomeComponent implements OnInit {
         let passivestatementModuleTexts=``;
         let passivecode;
         if(!(editstatement==0)){
-        editext+= array_table.includes(editstatement)  ? `gs`+i+`_`+`table`+`_`+editstatement : `Gs`+i+`_`+`text`+`_`+editstatement;}
+        editext+= array_table.includes(editstatement)  ? `gs`+i+`_`+`table`+`_`+editstatement : `GS`+i+`_`+`text`+`_`+editstatement;}
         let resolutionVarTool = (this.tabledata[i-1+this.homeData.partSize].editorType=="3")?`
-        @indent_start;`:``;
+        @iBeg;`:``;
         if(!this.tabledata[i-1+this.homeData.partSize].static || this.tabledata[i-1+this.homeData.partSize].editorType=="3") {
             resolutionModuleTool = this.generateToolWithObjects(i-1+this.homeData.partSize,i-1,resolutionSteps,2,editext)
         let toolMode= (this.tabledata[i-1+this.homeData.partSize].editorType=="3" && this.tabledata[i-1+this.homeData.partSize].static)?"display":"editor";
@@ -427,15 +449,15 @@ export class HomeComponent implements OnInit {
             resolutionVarTool+=``;
         }
 
-        resolutionVarTool += (this.tabledata[i-1+this.homeData.partSize].editorType=="3")?`  @indent_end;
+        resolutionVarTool += (this.tabledata[i-1+this.homeData.partSize].editorType=="3")?`  @iEnd;
             `:``;
         for(let j=1; j<=textstatements; j++) {
             let booll=array_table.includes(j);
             if(j!=editstatement && !booll){
             statementModuleTexts += `
-                <p>%Gs`+i+`_`+`text`+`_`+j+`;`+`</p>`;
+                <p>%GS`+i+`_`+`text`+`_`+j+`;`+`</p>`;
                 statementModuleSMTexts += `
-                <p>%Gs`+i+`_`+`text`+`_`+j+`;`+`</p>`;
+                <p>%GS`+i+`_`+`text`+`_`+j+`;`+`</p>`;
             }
             else if(booll && j!=editstatement)
             {
@@ -455,7 +477,7 @@ export class HomeComponent implements OnInit {
                 else
                 {
                 statementModuleSMTexts += `
-                <p>%Gs`+i+`_`+`text`+`_`+j+`;`+`</p>`;
+                <p>%GS`+i+`_`+`text`+`_`+j+`;`+`</p>`;
                 statementModuleTexts += resolutionVarTool;
                 }
             }
@@ -463,11 +485,20 @@ export class HomeComponent implements OnInit {
         this.creatingTableStructure(i,array_table,'gs');
         let commentHeader = "<!-- *************************************** " + resolutionSteps[i - 1] + " *************************************** -->";
         for(let j=1; j<=passivestatements; j++) {
-            passiveModuleTexts += `
-                <p>%Gs`+i+`_`+`passivetext`+`_`+j+`;`+`</p>`
-        }
-        for(let j=1; j<=passivestatements; j++) {
-            passivestatementModuleTexts += `<p>&(text(Gs`+i+`_`+`passivetext`+`_`+j+`));`+`</p>`
+          let booll=array_table.includes(textstatements+j);
+          let table_num=textstatements+j;
+            if(booll) {
+              passiveModuleTexts += `
+                %gs`+i+`_`+`table`+`_`+table_num+`;`
+
+                passivestatementModuleTexts += `&(text(gs`+i+`_`+`table`+`_`+table_num+`));`
+            } else {
+              passiveModuleTexts += `
+                <p>%GS`+i+`_`+`passivetext`+`_`+table_num+`;`+`</p>`
+
+                passivestatementModuleTexts += `<p>&(text(GS`+i+`_`+`passivetext`+`_`+table_num+`));`+`</p>`
+            }
+            
         }
         passivecode=passivestatements!=0 ? `
                 &(("@modeRequested;"=="static") ? "${passivestatementModuleTexts}"  : "");` : ``;
@@ -580,7 +611,7 @@ export class HomeComponent implements OnInit {
             if(j<=this.tabledata[moduleNumber].totalEB){
                 if(this.tabledata[moduleNumber].stepname.charAt(0)!="I"){
                     tool_object_text=`
-                    <p>%Gs`+j+`_text_`+j+`</p>
+                    <p>%GS`+j+`_text_`+j+`</p>
                     `;
                     this.object_reference_text.push(tool_object_text);
                 }
@@ -621,15 +652,17 @@ export class HomeComponent implements OnInit {
         for(let i=0;i<array_table.length;i++)
         {
             this.table_structure+= `
-        <text ref=`+part+index+`_`+`table`+`_`+array_table[i]+`>
-            <table role="presentation">
-                <tr valign=baseline height=@table_height;>
-                    <td width=@table_width; align=right>@userf.disp("");</td>
-                    <td>@varEqualTo;</td>
-                    <td></td>
-                </tr>
-            </table>
-        </text>
+          <text ref=`+part+index+`_`+`table`+`_`+array_table[i]+`>
+              @iBeg;
+              <table role="presentation">
+                  <tr valign=baseline height=@table_height;>
+                      <td width=@table_width; align=right>@userf.disp("");</td>
+                      <td>@varEqualTo;</td>
+                      <td></td>
+                  </tr>
+              </table>
+              @iEnd;
+          </text>
                             `
         }
     }
@@ -682,13 +715,75 @@ export class HomeComponent implements OnInit {
             this.toolType.push(this.tool_type[this.tabledata[i-1+this.homeData.partSize].editorType])
         }
     }
-    console.log(this.main_editor_array);
-    console.log(anspro_mapping);
     const final_mapping = "<return value=#{"+anspro_mapping.join(',').toString()+"}>";
     return final_mapping;
   }
 
-  generateEvaluations() {
+  getAnsproRule() {
+    let rulename = [];
+    this.tabledata.forEach((row, index) => {
+      if (row.features && row.features.includes("letters")) {
+        if (row.buttons && row.buttons.includes("list")) {
+          rulename.push("list2");
+        } else {
+          rulename.push("polynom2");
+        }
+      } else {
+        if (row.buttons && row.buttons.includes("list")) {
+          rulename.push("list2");
+        } else {
+          rulename.push("arith2");
+        }
+      }
+    })
+    console.log(rulename)
+    return rulename;
+  }
+
+  getAnsproCatches() {
+    let catches = [];
+    this.tabledata.forEach((row, index) => {
+      let catchelines=``;
+      if (row.features && row.features.includes("letters")) {
+        catchelines=`
+            <catch name=value.*>
+            <catch name=value.TooManyVariables redirect={value.MismatchVariables}>`
+      }
+
+      if (row.buttons && row.buttons.includes("pow") && (row.buttons.includes("div") || row.buttons.includes("mixednb"))) {
+        catchelines+=`
+            &(@userFeedback.fracSimplifyDivByOne(););
+            <catch cond=("@itemAnspro.checkCatch(reduce,NegativeInExp);"=="1" && "@itemAnspro.getCurrentFeedbackField('value');" == "Correct") redirect={value.NegExpNotAllowed}>
+            <catch cond=("@itemAnspro.checkCatch(convention,MixedNumberMismatch);"=="1" && "@itemAnspro.getCurrentFeedbackField('value');" == "Correct") redirect={reduce.ImproperMixedFraction}>`;
+      } else if (row.buttons && row.buttons.includes("list") && (row.buttons.includes("div") || row.buttons.includes("mixednb"))) {
+        catchelines+=`
+        ${row.features.includes("letters")?"":"<catch name=value.*>"}
+            <catch name={value.WrongOrder} redirect={value.Correct}>
+            &(@userFeedback.fracSimplifyDivByOne(););
+            <catch cond=(@itemAnspro.checkCatch(convention,MixedNumberMismatch);==1 && "@itemAnspro.getCurrentFeedbackField('value');" == "Correct") redirect={reduce.ImproperMixedFraction}>`;
+      } else if (row.buttons && row.buttons.includes("list")) {
+        catchelines+=`
+        ${row.features.includes("letters")?"":"<catch name=value.*>"}
+            <catch name={value.WrongOrder} redirect={value.Correct}>
+            &(@userFeedback.fracSimplifyDivByOne(););`;
+      } else if (row.buttons && (row.buttons.includes("div") || row.buttons.includes("mixednb"))) {
+        catchelines+=`
+            &(@userFeedback.fracSimplifyDivByOne(););
+            <catch cond=("@itemAnspro.checkCatch(convention,MixedNumberMismatch);"=="1" && "@itemAnspro.getCurrentFeedbackField('value');" == "Correct") redirect={reduce.ImproperMixedFraction}>`;
+      } else if (row.buttons && row.buttons.includes("pow")) {
+        catchelines+=`
+            &(@userFeedback.fracSimplifyDivByOne(););
+            <catch cond=("@itemAnspro.checkCatch(reduce,NegativeInExp);"=="1" && "@itemAnspro.getCurrentFeedbackField('value');" == "Correct") redirect={value.NegExpNotAllowed}>`
+      } else {
+        catchelines+=`&(@userFeedback.fracSimplifyDivByOne(););`;
+      }
+      catches.push(catchelines);
+    })
+    console.log(catches)
+    return catches;
+  }
+
+  generateEvaluations(rulename,catches) {
     let evaluationBlocks = [];
     let rule_type;
     for(let i=1; i<=this.main_editor_array.length; i++) {
@@ -705,10 +800,10 @@ export class HomeComponent implements OnInit {
             evaluationLoopModel+=this.splitStudentAnswer(count_editbox,count_ddm);
             if(this.countEditor[i-1]>0){
                 if(count_editbox==1){
-                    evaluationLoopModel+=this.addSingleEditbox(i-1,count_ddm);
+                    evaluationLoopModel+=this.addSingleEditbox(i-1,count_ddm,rulename[i-1],catches[i-1]);
                 }
                 else{
-                    evaluationLoopModel+=this.addSeparateApEditbox(i-1);
+                    evaluationLoopModel+=this.addSeparateApEditbox(i-1,rulename[i-1],catches[i-1]);
                 }
             initDDM = 1+ this.countEditor[i - 1] ;
             limit_DDM = limit_DDM + this.countEditor[i-1];
@@ -794,13 +889,13 @@ export class HomeComponent implements OnInit {
   //Adds AP for with same rule and catches to all editbox objects.
   //Input:
   //Output:
-  addSingleEditbox(module_index,count_ddm) {
+  addSingleEditbox(module_index,count_ddm,rulename,catches) {
       var module_name= this.editorModule[module_index];
       let singleEditboxModel=``;
       singleEditboxModel+=`
-        <evaluation rule=arith2 teacher="@teacher_answer1;" student="@student_answer1;">
+        <evaluation rule=`+rulename+` teacher="@teacher_answer1;" student="@student_answer1;">
           <feedback>
-            &(@userFeedback.fracSimplifyDivByOne(););
+              `+catches+`
           </feedback>`;
 
           if(count_ddm>0){
@@ -812,28 +907,7 @@ export class HomeComponent implements OnInit {
         return singleEditboxModel;
   }
 
-  addSameApEditbox(module_index) {
-      var module_name= this.editorModule[module_index];
-      var number_editbox= this.countEditor[module_index];
-      let sameAnswerModel=``;
-      sameAnswerModel+=`
-        <for name=i value=1 cond=(@i;<=`+number_editbox+`) next=(@i;+1)>
-          <evaluation rule=arith2 teacher="@('teacher_answer@i;');" student="@('student_answer@i;');">
-          <feedback>
-            &(@userFeedback.fracSimplifyDivByOne(););
-          </feedback>
-          <if cond=(@i;>9)>
-            &(@itemAnspro.storeFeedback("`+module_name+`.@i;"););
-            &(@itemAnspro.registerFeedback("`+module_name+`.@i;"));
-          <else>
-            &(@itemAnspro.storeFeedback("`+module_name+`.0@i;"););
-            &(@itemAnspro.registerFeedback("`+module_name+`.0@i;"));
-          </if>
-        </for>`
-        return sameAnswerModel;
-  }
-
-  addSeparateApEditbox(module_index){
+  addSeparateApEditbox(module_index,rulename,catches){
       var module_name= this.editorModule[module_index];
       var number_editbox= this.countEditor[module_index];
       var count_ddm= this.countDDm[module_index];
@@ -841,9 +915,9 @@ export class HomeComponent implements OnInit {
 
         for(let j=1;j<=number_editbox;j++){
           diffAnswerModel+=`
-          <evaluation rule=arith2 student="@student_answer`+j+`" teacher="@teacher_answer`+j+`">
+          <evaluation rule=`+rulename+` student="@student_answer`+j+`" teacher="@teacher_answer`+j+`">
           <feedback>
-              &(@userFeedback.fracSimplifyDivByOne(););
+              `+catches+`
           </feedback>`;
       if(!(number_editbox==1 && this.countDDm==0)) {
           if(j<10){
@@ -861,6 +935,27 @@ export class HomeComponent implements OnInit {
           }
       }
       return diffAnswerModel;
+  }
+
+  addSameApEditbox(module_index,rulename,catches) {
+    var module_name= this.editorModule[module_index];
+    var number_editbox= this.countEditor[module_index];
+    let sameAnswerModel=``;
+    sameAnswerModel+=`
+      <for name=i value=1 cond=(@i;<=`+number_editbox+`) next=(@i;+1)>
+        <evaluation rule=`+rulename+` teacher="@('teacher_answer@i;');" student="@('student_answer@i;');">
+        <feedback>
+          `+catches+`
+        </feedback>
+        <if cond=(@i;>9)>
+          &(@itemAnspro.storeFeedback("`+module_name+`.@i;"););
+          &(@itemAnspro.registerFeedback("`+module_name+`.@i;"));
+        <else>
+          &(@itemAnspro.storeFeedback("`+module_name+`.0@i;"););
+          &(@itemAnspro.registerFeedback("`+module_name+`.0@i;"));
+        </if>
+      </for>`
+      return sameAnswerModel;
   }
 
   addSameApDdm(module_index,ddm_start_index){
@@ -1149,6 +1244,9 @@ export class HomeComponent implements OnInit {
 
       <function name=HtmlTeacherModule list={partRequested}>
         <var name=table_width value=0>
+        <var name=table_height value=0>
+        <var name=iBeg value="">
+        <var name=iEnd value="">
         <unvar name=teacherAnswerHTML>${teacherHTMLModule}
         <return value="@teacherAnswerHTML">
       </function>
@@ -1255,6 +1353,9 @@ export class HomeComponent implements OnInit {
 
       <function name=HtmlTeacherModule list={partRequested}>
         <var name=table_width value=0>
+        <var name=table_height value=0>
+        <var name=iBeg value="">
+        <var name=iEnd value="">
         <unvar name=teacherAnswerHTML>${teacherHTMLModule}
         <return value="@teacherAnswerHTML">
       </function>
