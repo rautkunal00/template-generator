@@ -1293,7 +1293,7 @@ export class HomeComponent implements OnInit {
           <function name=StatementModule_Main list={modeRequested}>
             <TEXT REF=STATEMENT>
               <p>%Qn;</p>
-              &(("@modeRequested;"=="static" && "@modeRequested;"=="pdf") ? "" : "")
+              &(("@modeRequested;"=="static" || "@modeRequested;"=="pdf") ? "" : "")
             </TEXT>
             <return value="STATEMENT">
           </function>
