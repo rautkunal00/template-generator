@@ -69,7 +69,7 @@ const ansedGenerator = (i, mode, editbox, ddm, extraFeature) => {
     let reference = referenceGenerator("ansed", stepName, mode);
     let addExtra = ((extraFeature) ? `` : ``);
     let newEditor = 
-        `   
+        ` 
           <var name=ansed_editor_${stepName} value=@.toolLayout.createTool('ansed','ansed_${stepName}','editor',#{
             recall:text(),${feedbacktext}
             features:#{
@@ -91,10 +91,9 @@ const formedGenerator = (i, mode, editbox, ddm) => {
     let feedbacktext = ((mode == 1) ? `,
             feedbacks:#{}` : ``);
     let source = sourceGenerator("formed", stepName, editbox, ddm);
-   
     let reference = referenceGenerator("formed", stepName, mode);
     let newEditor = 
-        `  
+        ` 
           <var name=formed_editor_${stepName} value=@.toolLayout.createTool('formed','formed_${stepName}','editor',#{
             recall:text()${feedbacktext}
           });>
@@ -133,13 +132,13 @@ const tabedGenerator = (i, mode, editbox, ddm, extraFeature) => {
     let source = sourceGenerator("tabed", stepName, editbox, ddm);
     let reference = referenceGenerator("tabed", stepName, mode);
     let newEditor = 
-        `  
+        ` 
           <var name=tabed_editor_${stepName} value=@.toolLayout.createTool('tabed','tabed_${stepName}','editor',#{
             recall:text(),features: #{display: #{border: "none"}},${feedbacktext}
             mediaList:{${mediaList}}${addExtra}
           });>
           ${reference}`;
-    fillAnsobjects.push(source);
+          fillAnsobjects.push(source);
     return newEditor;
 }
 

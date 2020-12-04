@@ -1,11 +1,11 @@
 
 
-const getISLCode = (fillAnswerObjects, fillTeacherAnswers, statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, extraTeacher, teacherAnswer, teacherHTML, finalAP, intermidiateFunction, intermidiateValueFunction, generateNumListFunction, stikeMathFunction) => {
+const getISLCode = (fillAnswerObjects, fillTeacherAnswers, statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, extraTeacher, teacherAnswer, teacherHTML, finalAP, intermidiateFunction, intermidiateValueFunction, generateNumListFunction, stikeMathFunction, getMantissaExponentFunction, getConstantTableFunction) => {
   fillAnsobjects = [];
   teacherAnswers = []; 
   var isl_code = `<def>
   <include module=userfChemistry>
-  ${intermidiateFunction}${intermidiateValueFunction}${generateNumListFunction}${stikeMathFunction}
+  ${intermidiateFunction}${intermidiateValueFunction}${generateNumListFunction}${stikeMathFunction}${getMantissaExponentFunction}
 </def>
 
 <description>
@@ -54,12 +54,15 @@ const getISLCode = (fillAnswerObjects, fillTeacherAnswers, statementStepsList, r
               <td rw id=i1_chemform_id>%tabed_source_I1_1;</td>
             </tr>
           </table>
-    		</text>
-
+        </text>
+        
+        ${getConstantTableFunction}
+        
         <!-- ###############################<< editor >>###############################-->
-     ${fillAnswerObjects}
+        ${fillAnswerObjects}
 
-     ${fillTeacherAnswers}
+        ${fillTeacherAnswers}
+        
 
       </def> 
     </function>
@@ -73,7 +76,6 @@ const getISLCode = (fillAnswerObjects, fillTeacherAnswers, statementStepsList, r
       
         <!-- *************************************** Main Question ***************************************-->
         <function name=StatementModule_Main list={modeRequested}>
-      
           <TEXT REF=STATEMENT>
           
           </TEXT>

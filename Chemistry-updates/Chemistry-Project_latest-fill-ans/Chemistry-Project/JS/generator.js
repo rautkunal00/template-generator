@@ -156,7 +156,7 @@ const calculateTries = () => {
 const generateIntermidiateAp = () => {
     if (intermediateAp) {
         return `
-  <function name=arith2_sci_catches list={}>
+  <function name=arith2_sci_catches list={long_decimal_flag}>
     <catch name=value.*>
     <catch name=type.*>
     <catch name=reduce.*>
@@ -165,10 +165,15 @@ const generateIntermidiateAp = () => {
       &(@userFeedback.removeAndReplaceFeedback("reduce","RegroupNumber"))
       <catch cond=("@itemAnspro.getCurrentFeedbackField("convention");" == "ToPowerOne") redirect={convention._}>
     </if>
-    &(@userFeedback.arithGen());
-    <catch redirect={type._}>
+    <if cond=(!(@long_decimal_flag;))>
+      &(@userFeedback.arithGen(););
+      <catch redirect={type._}>
+    <else>
+    	&(@userFeedback.fracSimplifyDivByOne(););
+    </if>
     <catch cond=(@itemAnspro.checkCatch(reduce,PlusZero);==1 && "@itemAnspro.getCurrentFeedbackField("value");" == "Correct") redirect={reduce.RegroupNumber,value.Correct}>
     <catch cond=("@itemAnspro.getCurrentFeedbackField("reduce");" == "CoefNotReduced" && "@itemAnspro.getCurrentFeedbackField("value");" == "Correct") redirect={reduce._,value.Correct}> 
+    
   </function>
         `;
     } 
@@ -180,29 +185,23 @@ const generateIntermidiateAp = () => {
 const generateIntermidiateValue = () => {
     if (intermediateValue) {
         return `
-  <function name=extraDigitIntermediate list={num,sigfig}>
-    <var name=num_sigfig value=@userfChemistry.toSigFig(@num;,@sigfig;)>
-    <var name=num_val value=@num_sigfig[2];>
-    <if cond=(@num_val;==@num;)>
-    	<var name=num_val_local value=@userf.replace_comma_num("@num_val;");>
-    	<return value={@num_val;,0}>
-    <else>
-    	<var name=num_sigfig value=@userfChemistry.toSigFig(@num;,(@sigfig;+1))>
-      <var name=num_val value=@num_sigfig[2];>
+  <function name=extra_digit_intermediate list={num,sigfig,max_extra_digit}>
+    <var name=max_extra_digit value=((@max_extra_digit;)?@max_extra_digit;:2)>
+    
+    <var name=count value=0>
+    <var name=hdot_flag value=0>
+    <for name=i value=0 cond=(@i;<=@max_extra_digit;) next=(@i; + 1)>
+  		<var name=num_val value=@userf.ansSigFig(@num;,(@sigfig;+@i;))>
       <if cond=(@num_val;==@num;)>
-        <var name=num_val_local value=@userf.replace_comma_num("@num_val;");>
-        <return value={@num_val;,0}>
+      	<var name=i value=(@max_extra_digit;+1)>
       <else>
-    		<var name=num_sigfig value=@userfChemistry.toSigFig(@num;,(@sigfig;+2))>
-      	<var name=num_val value=@num_sigfig[2];>
-        <if cond=(@num_val;==@num;)>
-          <var name=num_val_local value=@userf.replace_comma_num("@num_val;");>
-          <return value={@num_val;,0}>
-    		<else>
-        	<return value={@num_val;,1}>
-        </if>
+    		<var name=count value=@count;+1>
       </if>
-    </if>
+		</for>
+    
+    <var name=hdot_flag cond=(@count;>@max_extra_digit;) value=1>
+    <var name=sigfig value=(@sigfig;+@count;-@hdot_flag;)>
+    <return value={@num_val;,@sigfig;,@hdot_flag;}>
   </function>
         `;
     } 
@@ -233,11 +232,12 @@ const generateNumListDef = () => {
 const stikeMathDef = () => {
     if (stikeMath) {
         return `
-  <function name=strike_math list={val1,mode}>
-    <if cond=("@mode;"=="editor")>
-      <return value="@val1;">  	
+  <function name=strike_math list={val1,mode,space}>
+    <var name=isSpace value=(@space; == 1?"&sp;":"")>
+    <if cond=(!@mode;)>
+      <return value="@isSpace;<font color=@userf.red;><strike><font color=@userf.black;>@val1;</font></strike></font>">  	
     <else>
-      <return value="<font color=@userf.red;><strike><font color=@userf.black;>@val1;</font></strike></font>">  	
+      <return value="@isSpace;@val1;">    
     </if>
   </function>
         `;
@@ -247,6 +247,57 @@ const stikeMathDef = () => {
     }
 }
 
+const getMantissaExponentDef = () => {
+    if (getMantissaExponent) {
+        return `
+  <function name=get_mantissa_exponent list={scientific_notation,mode}>
+    <if cond=(!(@mode;))>
+      <var name=split1 value=split("@scientific_notation;",'\\\\times;[',word);>
+      <var name=mantissa_value value=split(@split1[1],'[]');>
+      <var name=exponent_init value=split(@split1[2],'10^',word);>
+      <var name=exponent_value value=split(@exponent_init[1],'[]]');>
+      <var name=return_list value={@mantissa_value[1];,@exponent_value[1];}>
+    <else>
+    	<var name=split1 value=split("@scientific_notation;",'&times',word);>
+      <var name=mantissa_value value=@split1[1];>
+      <var name=exponent_value value=split(@split1[2],'<sup></sup>');>
+      <var name=return_list value={@mantissa_value;,@exponent_value[2];}>
+    </if>
+    <return value=@return_list;>
+  </function>
+        `;
+    } 
+    else {
+        return ``;
+    }
+}
+
+const getConstantTableDef = () => {
+    if (getConstantTable) {
+        return `
+        <var name=border value="style='text-align:left;; border:1px solid @userf.black;; padding:5px 7px'">
+        <text ref=constant_data_table>
+          <table style="border-collapse: collapse;" @userf.caption("@Table_Cap;");>
+            <tr>
+              <th @valign_base; scope=col @border;>@Constant;</th>
+              <th @valign_base; scope=col @border;>@Value;</th>
+            </tr>
+            <tr>
+              <td @valign_base; @border;>%Gas_constant;</td>
+              <td @valign_base; @border;>%r_const_math;</td>
+            </tr>     
+            <tr>
+              <td @valign_base; @border;>%Fdp_const;</td>
+              <td @valign_base; @border;><math></math></td>
+            </tr>  
+          </table>
+        </text>
+        `;
+    } 
+    else {
+        return ``;
+    }
+}
 const getFillAnsObjects = (fillAnsobjects) =>{
 
     let str1="";
@@ -288,8 +339,10 @@ const generateISL = () => {
     const intermidiateValueFunction = generateIntermidiateValue();
     const generateNumListFunction = generateNumListDef();
     const stikeMathFunction = stikeMathDef();
+    const getMantissaExponentFunction = getMantissaExponentDef();
+    const getConstantTableFunction = getConstantTableDef();
     let fillAnswerObjects = getFillAnsObjects(fillAnsobjects);
     let fillTeacherAnswers = getfillTeacherAnswers(teacherAnswers);
-    const islCode = getISLCode(fillAnswerObjects, fillTeacherAnswers, statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, extraTeacher, teacherAnswer, teacherHTML, finalAP, intermidiateFunction, intermidiateValueFunction, generateNumListFunction, stikeMathFunction);
+    const islCode = getISLCode(fillAnswerObjects, fillTeacherAnswers, statementStepsList, resolutionStepsList, statementSteps, resolutionSteps, staticSourceList, triesModule, apModuleList, extraTeacher, teacherAnswer, teacherHTML, finalAP, intermidiateFunction, intermidiateValueFunction, generateNumListFunction, stikeMathFunction, getMantissaExponentFunction, getConstantTableFunction);
     $("#isl-data").val(islCode);
 }

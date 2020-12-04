@@ -6,9 +6,9 @@ const htmlTeacherModule = () => {
         let editorType = question.type;
         let ta = `
         <if cond=("@partRequested;" == "${stepName}")>
-              <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),fillAnswer:"@ans_${stepName};"});>
-              <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
-          </if>`;
+        <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),fillAnswer:"@ans_${stepName};"});>
+        <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
+    </if>`;
         taArr.push(ta);
         i++;
     });
@@ -41,15 +41,16 @@ const generateTeacherAnswer = (stepName, editorType, editbox, ddm) => {
             answerArr.push(answer);
         }
         fillanswer =` 
-        <var name=@ans_${stepName} value="${answerArr}">`
+        <var name=ans_${stepName} value="${answerArr.join(" ")}">`
         teacherAnswers.push(fillanswer);
+
         teacherAnswer = `
         <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="@ans_${stepName};">`;
     }
     else if (editorType == "ansed") {
         let answer = `\\\\editbox;[]`;
-        fillanswer =` 
-        <var name=@ans_${stepName} value="${answer}">`
+       fillanswer =` 
+        <var name=ans_${stepName} value="${answer}">`
         teacherAnswers.push(fillanswer);
 
         teacherAnswer = `
@@ -57,7 +58,7 @@ const generateTeacherAnswer = (stepName, editorType, editbox, ddm) => {
     }
     else if (editorType == "tabed") {
         fillanswer =` 
-        <var name=@ans_${stepName} value="\\\\set1;[]">`
+        <var name=ans_${stepName} value="\\\\set1;[]">`
         teacherAnswers.push(fillanswer);
         teacherAnswer = `
         <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="@ans_${stepName};">`;
@@ -156,4 +157,3 @@ const extraTA = () => {
     });
     return `${extraTeacherAnswer.join("")}`;
 }
-
