@@ -35,19 +35,23 @@ const sourceGenerator = (editor, stepName, editbox, ddm) => {
         ddmSource.push(source);
     }
     if(editbox==0){
-        return `${editboxSource.join("")}${ddmSource.join("\n\t\t\t\t\t")}`;
+        return `${editboxSource.join("")}${ddmSource.join("\n\t")}\n\t`;
+    }
+    else if(ddm==0){
+        return `${editboxSource.join("\n\t")}${ddmSource.join("")}\n\t`;
     }
     else{
-        return `${editboxSource.join("\n\t\t\t\t\t")}
-          ${ddmSource.join("\n\t\t\t\t\t")}`;
+        return `${editboxSource.join("\n\t")}
+        ${ddmSource.join("\n\t")}\n\t`;
     }
     
 }
 
-const referenceGenerator = (editor, stepName, mode) => {
+const referenceGenerator = (editor, stepName, mode, stepType)=> {
     let refVal = ((mode == 1) ? "INTERACTION" : "SOLUTION");
+    let checkForType = ((stepType == undefined) ? "" : stepType);
     return `<TEXT REF=${refVal}>
-            @${editor}_editor_${stepName};
+            ${checkForType}@${editor}_editor_${stepName};
           </TEXT>
           <return value="${refVal}">`;
 
@@ -61,12 +65,12 @@ const staticGS = () => {
 
 }
 
-const ansedGenerator = (i, mode, editbox, ddm, extraFeature) => {
+const ansedGenerator = (i, mode, editbox, ddm, extraFeature, TypeStatement) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let feedbacktext = ((mode == 1) ? `
             feedbacks:#{},` : ``);
     let source = sourceGenerator("ansed", stepName, editbox, ddm);
-    let reference = referenceGenerator("ansed", stepName, mode);
+    let reference = referenceGenerator("ansed", stepName, mode, TypeStatement);
     let addExtra = ((extraFeature) ? `` : ``);
     let newEditor = 
         ` 
@@ -86,16 +90,18 @@ const ansedGenerator = (i, mode, editbox, ddm, extraFeature) => {
     return newEditor;
 }
 
-const formedGenerator = (i, mode, editbox, ddm) => {
+const formedGenerator = (i, mode, editbox, ddm, extraFeature, TypeStatement) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let feedbacktext = ((mode == 1) ? `,
             feedbacks:#{}` : ``);
     let source = sourceGenerator("formed", stepName, editbox, ddm);
-    let reference = referenceGenerator("formed", stepName, mode);
+    let reference = referenceGenerator("formed", stepName, mode, TypeStatement);
+    let addExtra = ((extraFeature) ? `,
+            mediaFeatures: #{ansed: #{ansedChemMode: "chemistry_equation"}}` : ``);
     let newEditor = 
         ` 
           <var name=formed_editor_${stepName} value=@.toolLayout.createTool('formed','formed_${stepName}','editor',#{
-            recall:text()${feedbacktext}
+            recall:text()${feedbacktext}${addExtra}
           });>
           ${reference}`;
           fillAnsobjects.push(source);
@@ -115,7 +121,7 @@ const mediaListGenerator = (editbox, ddm) => {
     return mediaList;
 }
 
-const tabedGenerator = (i, mode, editbox, ddm, extraFeature) => {
+const tabedGenerator = (i, mode, editbox, ddm, extraFeature,TypeStatement) => {
     let stepName = ((mode == 1) ? "I" : "GS") + i;
     let mediaList = mediaListGenerator(editbox, ddm);
     let feedbacktext = ((mode == 1 && editbox != 0) ? `
@@ -130,7 +136,7 @@ const tabedGenerator = (i, mode, editbox, ddm, extraFeature) => {
               }
             }`);
     let source = sourceGenerator("tabed", stepName, editbox, ddm);
-    let reference = referenceGenerator("tabed", stepName, mode);
+    let reference = referenceGenerator("tabed", stepName, mode,TypeStatement);
     let newEditor = 
         ` 
           <var name=tabed_editor_${stepName} value=@.toolLayout.createTool('tabed','tabed_${stepName}','editor',#{

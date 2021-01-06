@@ -15,7 +15,7 @@ const updateDataInTable = () => {
             noOfTries = question.tries;
             noOfEditbox = question.editbox;
             noOfddm = question.ddm;
-            if (editorType == "ansed" || editorType == "tabed") {
+            if (editorType == "ansed" || editorType == "tabed" || editorType == "formed") {
                 extraFeature = question.extraFeature;
             }
         }
@@ -39,7 +39,7 @@ const updateDataInTable = () => {
             if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
                 noOfEditbox = gs.editbox;
                 noOfddm = gs.ddm;
-                if (editorType == "ansed" || editorType == "tabed") {
+                if (editorType == "ansed" || editorType == "tabed" || editorType == "formed") {
                     extraFeature = gs.extraFeature;
                 }
             }

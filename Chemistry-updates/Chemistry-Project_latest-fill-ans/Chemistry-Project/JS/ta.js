@@ -4,23 +4,44 @@ const htmlTeacherModule = () => {
     mainQuestions.forEach((question) => {
         let stepName = "I" + i;
         let editorType = question.type;
-        let ta = `
+        let ta = ``;
+        if (editorType == "tabed"){
+            ta = `
         <if cond=("@partRequested;" == "${stepName}")>
-        <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),fillAnswer:"@ans_${stepName};"});>
-        <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
-    </if>`;
+            <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),features: #{display: #{border: "none"}},fillAnswer:"&(text(ans_${stepName}))"});>
+            <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
+        </if>`;
+        }
+        else{
+            ta = `
+        <if cond=("@partRequested;" == "${stepName}")>
+            <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),fillAnswer:"&(text(ans_${stepName}))"});>
+            <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
+        </if>`;
+        }
         taArr.push(ta);
         i++;
     });
     gsQuestions.forEach((question) => {
         let stepName = "GS" + j;
         let editorType = question.type;
+        let ta = ``;
         if (!question.static) {
-            let ta = `
-            <if cond=("@partRequested;" == "${stepName}")>
-            <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),fillAnswer:"@ans_${stepName};"});>
+            if (editorType == "tabed"){
+                ta = `
+        <if cond=("@partRequested;" == "${stepName}")>
+            <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),features: #{display: #{border: "none"}},fillAnswer:"&(text(ans_${stepName}))"});>
             <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
         </if>`;
+            }
+            else{
+                ta = `
+        <if cond=("@partRequested;" == "${stepName}")>
+            <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),fillAnswer:"&(text(ans_${stepName}))"});>
+            <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
+        </if>`;
+            }
+           
             taArr.push(ta);
         }
         j++;
@@ -32,36 +53,52 @@ const generateTeacherAnswer = (stepName, editorType, editbox, ddm) => {
     let teacherAnswer = ``;
     if (editorType == "formed") {
         let answerArr = [];
+        let serverIfArr = [];
         for (i = 1; i <= editbox; i++) {
             let answer = `[ans_returned_${stepName}_${i}]=[\\\\editbox;[]];`;
+            let serverIF = `ans_returned_${stepName}_${i}:"\\\\editbox;[]"`;
             answerArr.push(answer);
+            serverIfArr.push(serverIF);
         }
         for (j = (editbox + 1); j <= (editbox + ddm); j++) {
             let answer = `[ans_returned_${stepName}_${j}]=[];`;
+            let serverIF = `ans_returned_${stepName}_${j}:"";`;
             answerArr.push(answer);
+            serverIfArr.push(serverIF);
         }
         fillanswer =` 
-        <var name=ans_${stepName} value="${answerArr.join(" ")}">`
+        <text ref=ans_${stepName}>${answerArr.join("")}</text>`
         teacherAnswers.push(fillanswer);
 
-        teacherAnswer = `
-        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="@ans_${stepName};">`;
+        servrIfAnswer =`#{${serverIfArr.join(",")}}`;
+
+        if(stepName.startsWith('I')){
+            teacherAnswer = `
+        <if cond=("@mode;" == "server_if")>
+            <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value=${servrIfAnswer}>
+        <else>
+             <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="&(text(ans_${stepName}))">
+        </if>`;
+        }else{
+            teacherAnswer = `
+        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="&(text(ans_${stepName}))">`;
+        }
     }
     else if (editorType == "ansed") {
         let answer = `\\\\editbox;[]`;
        fillanswer =` 
-        <var name=ans_${stepName} value="${answer}">`
+        <text ref=ans_${stepName}>${answer}</text>`
         teacherAnswers.push(fillanswer);
 
         teacherAnswer = `
-        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="@ans_${stepName};">`;
+        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="&(text(ans_${stepName}))">`;
     }
     else if (editorType == "tabed") {
         fillanswer =` 
-        <var name=ans_${stepName} value="\\\\set1;[]">`
+        <text ref=ans_${stepName}>\\\\set1;[]</text>`
         teacherAnswers.push(fillanswer);
         teacherAnswer = `
-        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="@ans_${stepName};">`;
+        <var name=teacherAnswerHash["${editorType}_${stepName}"] cond=("@partRequested;" == "${stepName}") value="&(text(ans_${stepName}))">`;
     }
     else if (editorType == "moleced") {
         teacherAnswer = `

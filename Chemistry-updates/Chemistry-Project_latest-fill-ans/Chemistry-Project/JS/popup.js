@@ -63,6 +63,10 @@ let gsQueForm = () => {
                     <td><select id="gsEditorSelector"><option>Select Editor</option>${editorsList}</select></td>
                 </tr>
                 <tr>
+                    <td>Step type</td>
+                    <td><select id="gsStepTypeSelector" disabled="disabled"><option>Select Editor</option>${stepTypeList}</select></td>
+                </tr>
+                <tr>
                     <td>No. of Editbox</td>
                     <td><input type=number id="gsEditboxCount" name="gsEditboxCount" disabled="disabled" /></td>
                 </tr>

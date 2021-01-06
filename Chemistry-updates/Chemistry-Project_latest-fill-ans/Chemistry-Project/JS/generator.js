@@ -28,7 +28,7 @@ const getStatementSteps = () => {
         if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
             editbox = question.editbox;
             ddm = question.ddm;
-            if (editorType == "ansed" || editorType == "tabed") {
+            if (editorType == "ansed" || editorType == "tabed" || editorType == "formed") {
                 extraFeature = question.extraFeature;
             }
         }
@@ -39,7 +39,7 @@ const getStatementSteps = () => {
                 editor = ansedGenerator(i, 1, editbox, ddm, extraFeature);
                 break;
             case "formed":
-                editor = formedGenerator(i, 1, editbox, ddm);
+                editor = formedGenerator(i, 1, editbox, ddm, extraFeature);
                 break;
             case "tabed":
                 editor = tabedGenerator(i, 1, editbox, ddm, extraFeature);
@@ -80,24 +80,42 @@ const getResolutionSteps = () => {
         let editbox = 0;
         let ddm = 0;
         let extraFeature = false;
+        let stepType = "NA";
+        let TypeStatement=' ';
         if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
             editbox = question.editbox;
             ddm = question.ddm;
-            if (editorType == "ansed" || editorType == "tabed") {
+            if (editorType == "ansed" || editorType == "tabed" || editorType == "formed") {
                 extraFeature = question.extraFeature;
             }
+        }
+        if (editorType == "ansed" || editorType == "formed" || editorType == "tabed") {
+            stepType = question.stepType;
+                    
+            let PESTStatment = `<p>@userfChemistry.show_int_calc_instructions("@modeRequested;");</p>
+            `;
+            let RIStatement = `<p>@userfChemistry.sigDigInstruction();</p>
+            `
+
+           
+            if (stepType == "Final Calculation") {
+                TypeStatement = RIStatement
+            }else if(stepType == "Intermediate Calculation"){
+                TypeStatement = PESTStatment
+            }
+
         }
         const comment = `<!-- *************************************** GS` + i + ` *************************************** --> `;
         let editor = ` `;
         switch (editorType) {
             case "ansed":
-                editor = ansedGenerator(i, 2, editbox, ddm, extraFeature);
+                editor = ansedGenerator(i, 2, editbox, ddm, extraFeature,TypeStatement);
                 break;
             case "formed":
-                editor = formedGenerator(i, 2, editbox, ddm);
+                editor = formedGenerator(i, 2, editbox, ddm, extraFeature,TypeStatement);
                 break;
             case "tabed":
-                editor = tabedGenerator(i, 2, editbox, ddm, extraFeature);
+                editor = tabedGenerator(i, 2, editbox, ddm, extraFeature,TypeStatement);
                 break;
             case "moleced":
                 editor = molecedGenerator(i, 2);
@@ -232,15 +250,20 @@ const generateNumListDef = () => {
 const stikeMathDef = () => {
     if (stikeMath) {
         return `
-  <function name=strike_math list={val1,mode,space}>
-    <var name=isSpace value=(@space; == 1?"&sp;":"")>
-    <if cond=(!@mode;)>
-      <return value="@isSpace;<font color=@userf.red;><strike><font color=@userf.black;>@val1;</font></strike></font>">  	
-    <else>
-      <return value="@isSpace;@val1;">    
-    </if>
-  </function>
-        `;
+    <!-- strike function -->
+    <!-- val1: Number or unit -->
+    <!-- mt_ap: 0 or "" for math font, other number for Anspro -->
+    <!-- mode: create variable in trunck module with any value and in TA/SM with 0 -->
+    <function name=strike_function list={val1,mt_ap,mode}>
+        <if cond=(!@mt_ap; && !@mode;)>
+        <return value="<font color=@userf.red;><strike><font color=@userf.black;>@val1;</font></strike></font>">  	
+        <else cond=(@mt_ap; && !@mode;)>
+        <return value="\\\\style<'color:@userf.red;;'>;[\\\\enclose<'notation:updiagonalstrike;'>;[\\\\style<'color:@userf.black;;'>;[@val1;]]]">  
+        <else>
+        <return value="@val1;">
+        </if>
+    </function>
+    `;
     } 
     else {
         return ``;

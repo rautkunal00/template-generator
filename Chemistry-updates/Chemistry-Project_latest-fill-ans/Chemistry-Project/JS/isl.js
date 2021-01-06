@@ -96,6 +96,7 @@ const getISLCode = (fillAnswerObjects, fillTeacherAnswers, statementStepsList, r
         <!-- *************************************** Show Me ***************************************-->
         <function name=ResolutionModule_Main list={modeRequested}> 
         ${staticSourceList}
+
           <TEXT REF=RESOLUTION>
           
           </TEXT>
@@ -117,6 +118,10 @@ const getISLCode = (fillAnswerObjects, fillTeacherAnswers, statementStepsList, r
     </function>
 
     <function name=HtmlTeacherModule list={partRequested}>
+    
+      <var name=indent_start value="">
+      <var name=indent_end value="">
+      
       <unvar name=teacherAnswerHTML>${teacherHTML}
       <return value="@teacherAnswerHTML">
     </function>

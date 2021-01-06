@@ -12,5 +12,5 @@ let getMantissaExponent = false;
 let getConstantTable = false;
 let fillAnsobjects=[];
 let teacherAnswers = [];
-
+let stepTypeList = ``;
 

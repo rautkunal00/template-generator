@@ -10,7 +10,7 @@ const addStructure = () => {
             <div><input type=checkbox id="add-intermediate-ap" name="intermediateAp"/><label for="add-intermediate-ap">Intermediate AP Function</label>
             <input type=checkbox id="add-intermediate-value" name="intermediateValue"/><label for="add-intermediate-value">Intermediate Value</label>
             <input type=checkbox id="generate-num-list" name="generateNumList"/><label for="generate-num-list">Generate Num List</label>
-            </div><div><input type=checkbox id="add-strike-math" name="strikeMath"/><label for="add-strike-math">Strike Math</label>
+            </div><div><input type=checkbox id="add-strike-math" name="strikeMath"/><label for="add-strike-math">Strike Funtion</label>
             <input type=checkbox id="get-mantissa-exponent" name="getMantissaExponent"/><label for="get-mantissa-exponent">Get Mantissa Exponent</label>
             <input type=checkbox id="get-constant-table" name="getConstantTable"/><label for="get-constant-table">Get Constant Table</label>
         </div></div>`;
@@ -40,7 +40,6 @@ const addStructure = () => {
     $("#main-body").append(mainTable);
     $("#main-body").append(gsTable);
     $("#main-body").append(isl);
-    console.log("Buttons Added");
 };
 
 const addFormButtonListener = () => {
@@ -59,7 +58,7 @@ const addFormButtonListener = () => {
             editorData.tries = tries;
             editorData.editbox = editbox;
             editorData.ddm = ddm;
-            if (type == "ansed" || type == "tabed") {
+            if (type == "ansed" || type == "tabed" || type == "formed") {
                 editorData.extraFeature = extraFeature;
             }
         }
@@ -76,6 +75,7 @@ const addFormButtonListener = () => {
         let editorData = {};
         let static = $("#isStaticGS").prop("checked");
         let type = $("#gsEditorSelector").val();
+        let stepType = $("#gsStepTypeSelector").val();
         let editbox = Number($("#gsEditboxCount").val());
         let ddm = Number($("#gsDropdownCount").val());
         let extraFeature = $("#gsExtraFeature").prop("checked");
@@ -83,12 +83,13 @@ const addFormButtonListener = () => {
         $("#add-main-part").removeClass("hide");
         $("#gsPopupForm").remove();
         editorData.static = static;
+        editorData.stepType = stepType;
         if (!static) {
             editorData.type = type;
             if (type == "ansed" || type == "formed" || type == "tabed") {
                 editorData.editbox = editbox;
                 editorData.ddm = ddm;
-                if (type == "ansed" || type == "tabed") {
+                if (type == "ansed" || type == "tabed" || type == "formed") {
                     editorData.extraFeature = extraFeature;
                 }
             }
@@ -173,7 +174,6 @@ const addTableHeaders = () => {
             let thData = '<th class="header-data">' + header + '</th>';
             gth.append(thData);
         });
-        console.log(hdata);
     });
 }
 
@@ -187,6 +187,18 @@ const fetchEditors = () => {
         editorsList = options.join(" ");
     });
 }
+
+const fetchStepTypes = () => {
+    $.getJSON("../DATA/step-type.json", (stepType) => {
+        let options = [];
+        stepType.types.forEach((stepType) => {
+            let option = `<option value='${stepType}'>${stepType}</option>`;
+            options.push(option);
+        });
+        stepTypeList = options.join(" ");
+    });
+}
+
 
 const disableAllFieldsMain = () => {
     $("#mainTriesCount").attr("disabled", "disabled");
@@ -240,6 +252,7 @@ const onSelectEditorMain = () => {
                 enabledExtraFeaturesMain();
             case "formed":
                 enableForAnsedFormedTabedMain();
+                enabledExtraFeaturesMain();
                 break;
             case "ansed":
                 $("#mainEditboxCount").val("1");
@@ -290,11 +303,15 @@ const onSelectEditorGs = () => {
         switch (editorVal) {
             case "tabed":
                 enabledExtraFeaturesGS();
+                $("#gsStepTypeSelector").removeAttr("disabled");
             case "formed":
                 enableForAnsedFormedTabedGs();
+                enabledExtraFeaturesGS();
+                $("#gsStepTypeSelector").removeAttr("disabled");
                 break;
             case "ansed":
                 $("#gsEditboxCount").val("1");
+                $("#gsStepTypeSelector").removeAttr("disabled");
                 enabledExtraFeaturesGS();
             case "moleced":
             case "eleced":
