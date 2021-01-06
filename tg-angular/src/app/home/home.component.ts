@@ -841,14 +841,17 @@ export class HomeComponent implements OnInit {
             <catch cond=("@itemAnspro.checkCatch(reduce,NegativeInExp);"=="1" && "@itemAnspro.getCurrentFeedbackField('value');" == "Correct") redirect={value.NegExpNotAllowed}>
             <catch cond=("@itemAnspro.checkCatch(convention,MixedNumberMismatch);"=="1" && "@itemAnspro.getCurrentFeedbackField('value');" == "Correct") redirect={reduce.ImproperMixedFraction}>`;
       } else if (row.buttons && row.buttons.includes("list") && (row.buttons.includes("div") || row.buttons.includes("mixednb"))) {
-        catchelines+=`
-        ${row.features.includes("letters")?"":"<catch name=value.*>"}
+        catchelines+=`${!row.features?'':'${row.features.includes("letters")?"":"<catch name=value.*>"}'}
             <catch name={value.WrongOrder} redirect={value.Correct}>
             &(@userFeedback.fracSimplifyDivByOne(););
             <catch cond=(@itemAnspro.checkCatch(convention,MixedNumberMismatch);==1 && "@itemAnspro.getCurrentFeedbackField('value');" == "Correct") redirect={reduce.ImproperMixedFraction}>`;
-      } else if (row.buttons && row.buttons.includes("list")) {
-        catchelines+=`
-        ${row.features.includes("letters")?"":"<catch name=value.*>"}
+      } else if (row.buttons && row.buttons.includes("list") && row.features) {
+        catchelines+=`${!row.features?'':'${row.features.includes("letters")?"":"<catch name=value.*>"}'}
+            <catch name={value.WrongOrder} redirect={value.Correct}>
+            &(@userFeedback.fracSimplifyDivByOne(););`;
+      } 
+      else if (row.buttons && row.buttons.includes("list") && !row.features) {
+        catchelines+=`${!row.features?'':'${row.features.includes("letters")?"":"<catch name=value.*>"}'}
             <catch name={value.WrongOrder} redirect={value.Correct}>
             &(@userFeedback.fracSimplifyDivByOne(););`;
       } else if (row.buttons && (row.buttons.includes("div") || row.buttons.includes("mixednb"))) {
