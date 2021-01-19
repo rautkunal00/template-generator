@@ -129,6 +129,16 @@ const apForGeneral = () => {
       </feedback>`;
 }
 
+const apForRadioButton = () => {
+    return `
+    
+      <evaluation rule=radiobox student="@student_answer1;;@student_answer2;;@student_answer3;;@student_answer4;;@student_answer5;" teacher="@teacher_answer1;;@teacher_answer2;;@teacher_answer3;;@teacher_answer4;;@teacher_answer5;">
+      <feedback>
+       <catch name=value.*>
+       <catch name=system.*>
+      </feedback>    `;
+}
+
 const generateAnswerProcessing = () => {
     let answerProcessingArr = [];
     let i = 1, j = 1;
@@ -144,7 +154,7 @@ const generateAnswerProcessing = () => {
             editboxEvalution = apForEditbox(editbox, ddm, stepName);
             ddmEvalution = apForDDM(editbox, ddm, stepName);
             if (editorType == "tabed" && (editbox + ddm) == 0) {
-                generalRule = apForGeneral();
+                generalRule = apForRadioButton();
             }
         }
         else {
@@ -176,6 +186,9 @@ ${spiltval}${generalRule}
                 ddm = question.ddm;
                 editboxEvalution = apForEditbox(editbox, ddm, stepName);
                 ddmEvalution = apForDDM(editbox, ddm, stepName);
+                if (editorType == "tabed" && (editbox + ddm) == 0) {
+                    generalRule = apForRadioButton();
+                }
             }
             else {
                 generalRule = apForGeneral();

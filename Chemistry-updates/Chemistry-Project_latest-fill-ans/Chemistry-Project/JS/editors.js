@@ -97,7 +97,13 @@ const formedGenerator = (i, mode, editbox, ddm, extraFeature, TypeStatement) => 
     let source = sourceGenerator("formed", stepName, editbox, ddm);
     let reference = referenceGenerator("formed", stepName, mode, TypeStatement);
     let addExtra = ((extraFeature) ? `,
-            mediaFeatures: #{ansed: #{ansedChemMode: "chemistry_equation"}}` : ``);
+            features:#{
+              ansed:#{
+                syntax:#{
+                    chemistryMode:"chemistry_equation"
+                    }
+              }
+            }` : ``);
     let newEditor = 
         ` 
           <var name=formed_editor_${stepName} value=@.toolLayout.createTool('formed','formed_${stepName}','editor',#{
@@ -137,13 +143,26 @@ const tabedGenerator = (i, mode, editbox, ddm, extraFeature,TypeStatement) => {
             }`);
     let source = sourceGenerator("tabed", stepName, editbox, ddm);
     let reference = referenceGenerator("tabed", stepName, mode,TypeStatement);
-    let newEditor = 
+    let newEditor = ``
+    if(editbox==0 && ddm==0)
+    {
+        newEditor = 
+        ` 
+          <var name=tabed_editor_${stepName} value=@.toolLayout.createTool('tabed','tabed_${stepName}','editor',#{
+            recall:text(),
+            mediaList:{checkbox}
+          });>
+          ${reference}`;
+    }else{
+        newEditor = 
         ` 
           <var name=tabed_editor_${stepName} value=@.toolLayout.createTool('tabed','tabed_${stepName}','editor',#{
             recall:text(),features: #{display: #{border: "none"}},${feedbacktext}
             mediaList:{${mediaList}}${addExtra}
           });>
           ${reference}`;
+    }   
+     
           fillAnsobjects.push(source);
     return newEditor;
 }

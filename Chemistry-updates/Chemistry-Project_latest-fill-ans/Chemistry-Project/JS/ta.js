@@ -4,11 +4,20 @@ const htmlTeacherModule = () => {
     mainQuestions.forEach((question) => {
         let stepName = "I" + i;
         let editorType = question.type;
-        let ta = ``;
+        let ta = ``;  
+        let addExtra = ((question.extraFeature) ? `,features:#{ansed:#{syntax:#{chemistryMode:"chemistry_equation"}}}` : ``);
+        console.log(addExtra)            
         if (editorType == "tabed"){
             ta = `
         <if cond=("@partRequested;" == "${stepName}")>
             <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),features: #{display: #{border: "none"}},fillAnswer:"&(text(ans_${stepName}))"});>
+            <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
+        </if>`;
+        }
+        else if (editorType == "formed"){
+            ta = `
+        <if cond=("@partRequested;" == "${stepName}")>
+            <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text()${addExtra},fillAnswer:"&(text(ans_${stepName}))"});>
             <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
         </if>`;
         }
@@ -26,11 +35,19 @@ const htmlTeacherModule = () => {
         let stepName = "GS" + j;
         let editorType = question.type;
         let ta = ``;
+        let addExtra = ((question.extraFeature) ? `,features:#{ansed:#{syntax:#{chemistryMode:"chemistry_equation"}}}` : ``);
         if (!question.static) {
             if (editorType == "tabed"){
                 ta = `
         <if cond=("@partRequested;" == "${stepName}")>
             <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text(),features: #{display: #{border: "none"}},fillAnswer:"&(text(ans_${stepName}))"});>
+            <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
+        </if>`;
+            }
+            else if (editorType == "formed"){
+                ta = `
+        <if cond=("@partRequested;" == "${stepName}")>
+            <var name=${editorType}_display_${stepName}_TA value=@.toolLayout.createTool('${editorType}','${editorType}_${stepName}_TA','display',#{recall:text()${addExtra},fillAnswer:"&(text(ans_${stepName}))"});>
             <var name=teacherAnswerHTML value="@${editorType}_display_${stepName}_TA;">
         </if>`;
             }

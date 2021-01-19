@@ -254,14 +254,15 @@ const stikeMathDef = () => {
     <!-- val1: Number or unit -->
     <!-- mt_ap: 0 or "" for math font, other number for Anspro -->
     <!-- mode: create variable in trunck module with any value and in TA/SM with 0 -->
-    <function name=strike_function list={val1,mt_ap,mode}>
-        <if cond=(!@mt_ap; && !@mode;)>
-        <return value="<font color=@userf.red;><strike><font color=@userf.black;>@val1;</font></strike></font>">  	
-        <else cond=(@mt_ap; && !@mode;)>
-        <return value="\\\\style<'color:@userf.red;;'>;[\\\\enclose<'notation:updiagonalstrike;'>;[\\\\style<'color:@userf.black;;'>;[@val1;]]]">  
-        <else>
+    <function name=strike_function list={val1,mt_ap,mode,sp}>
+      <var name=space_val value=(@sp;==1?"&sp;":"")>
+      <if cond=(!@mt_ap; && !@mode;)>
+        <return value="@space_val;<font color=@userf.red;><strike><font color=@userf.black;>@val1;</font></strike></font>">  	
+      <else cond=(@mt_ap; && !@mode;)>
+        <return value="\\\\style<'color:@userf.red;;'>;[\\\\enclose<'notation:updiagonalstrike;'>;[\\\\style<'color:;;'>;[@val1;]]]">  
+      <else>
         <return value="@val1;">
-        </if>
+      </if>
     </function>
     `;
     } 
