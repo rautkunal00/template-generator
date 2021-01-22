@@ -13,7 +13,7 @@ let mainQueForm = () => {
                 </tr>
                 <tr>
                     <td>Editor type</td>
-                    <td><select id="mainEditorSelector"><option>Select Editor</option>${editorsList}</select></td>
+                    <td><select id="mainEditorSelector"><option>Select Type</option>${editorsList}</select></td>
                 </tr>
                 <tr>
                     <td>No. of Tries</td>
